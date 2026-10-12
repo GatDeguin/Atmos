@@ -1,0 +1,27 @@
+{
+  "id": "./",
+  "name": "ATMÓS — Meteorología",
+  "short_name": "ATMÓS",
+  "description": "Meteorología interactiva y animada, pronóstico y widgets para iPhone.",
+  "lang": "es-AR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0a1019",
+  "theme_color": "#0b111b",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "./icons/atmos-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/atmos-large.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
