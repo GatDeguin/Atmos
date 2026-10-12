@@ -1,7 +1,7 @@
 /* ATMÓS — cache de la aplicación, no intercepta datos meteorológicos de terceros. */
 'use strict';
-const NAME='atmos-app-shell-semantic-v4';
-const ASSETS=['./','./index.html','./instalar.html','./manifest.webmanifest','./icons/favicon.svg',
+const NAME='atmos-app-shell-horizon-v4-1';
+const ASSETS=['./horizon.css','./horizon.js','./','./index.html','./instalar.html','./manifest.webmanifest','./icons/favicon.svg',
 './icons/atmos-180.png','./icons/atmos-192.png','./icons/atmos-large.svg','./widget/ATMOS-Widget.js'];
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(NAME).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting()));

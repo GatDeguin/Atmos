@@ -5,6 +5,7 @@ Requires playwright and Chromium (CHROMIUM_PATH may override /usr/bin/chromium).
 import argparse, json, os, time, math, statistics, sys
 from datetime import datetime, timedelta
 from pathlib import Path
+from helpers import inline_html
 from playwright.sync_api import sync_playwright
 
 def fixture(code=61):
@@ -42,7 +43,7 @@ def run(url, output, baseline=False):
     def expect(cond,msg):
         if not cond:raise AssertionError(msg)
     with sync_playwright() as pw:
-        browser=pw.chromium.launch(executable_path=os.environ.get('CHROMIUM_PATH','/usr/bin/chromium'),headless=True,args=['--no-sandbox'])
+        browser=pw.chromium.launch(executable_path=os.environ.get('CHROMIUM_PATH','/usr/bin/chromium'),headless=True,args=['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader'])
         ctx=browser.new_context(viewport={'width':1440,'height':1000},service_workers='block')
         ctx.add_init_script(PROBE)
         ctx.route('https://api.open-meteo.com/**',lambda r:r.fulfill(json=fixture()))
@@ -51,7 +52,7 @@ def run(url, output, baseline=False):
         if url.startswith('inline:'):
             page.evaluate(PROBE)
             page.evaluate('''d=>{window.fetch=async (url,opts)=>{if(opts?.signal?.aborted)throw new DOMException('Aborted','AbortError');return new Response(JSON.stringify(String(url).includes('geocoding')?{results:[{name:'Córdoba',latitude:-31.4135,longitude:-64.1811,country:'Argentina'}]}:d),{status:200,headers:{'Content-Type':'application/json'}})}}''',fixture())
-            page.set_content(Path(url[7:]).read_text(),wait_until='load')
+            page.set_content(inline_html(Path(url[7:])),wait_until='load')
         else: page.goto(url)
         page.wait_for_selector('.hour-tile')
         def listener_case():

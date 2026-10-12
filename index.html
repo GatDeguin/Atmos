@@ -13,7 +13,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="ATMÓS" />
-  <title>ATMÓS — El clima, con otra perspectiva</title>
+  <title>ATMÓS — Horizon · El clima en perspectiva</title>
+  <!-- ATMOS-HORIZON-4 -->
   <style>
     :root {
       --bg: #0a1019; --bg2: #0c1520; --surface: #111d2b; --surface2: #172535; --surface3: #1a2b3b;
@@ -286,6 +287,7 @@
     :root[data-motion="off"] .atmos-ambient{display:none}
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
   </style>
+  <link rel="stylesheet" href="./horizon.css">
 </head>
 <body>
 <!-- Iconografía SVG embebida; no hay tipografías, librerías ni imágenes externas. -->
@@ -335,7 +337,7 @@
       <div class="side-label">EXPLORAR</div>
       <button class="side-item active" data-scroll="inicio"><svg class="icon"><use href="#ic-sun"/></svg>Panorama</button>
       <button class="side-item" data-scroll="horario"><svg class="icon"><use href="#ic-clock"/></svg>Por hora</button>
-      <button class="side-item" data-scroll="semanal"><svg class="icon"><use href="#ic-calendar"/></svg>Próximos 7 días</button>
+      <button class="side-item" data-scroll="semanal"><svg class="icon"><use href="#ic-calendar"/></svg>Próximos 10 días</button>
       <button class="side-item" data-scroll="detalles"><svg class="icon"><use href="#ic-gauge"/></svg>Atmósfera</button>
     </nav>
     <div class="side-group">
@@ -440,7 +442,7 @@ function validWeather(d){
     d.hourly && Array.isArray(d.hourly.time) && d.hourly.time.length>12 && d.hourly.time.length<=500 &&
     Array.isArray(d.hourly.temperature_2m) && d.hourly.temperature_2m.length===d.hourly.time.length &&
     d.daily && Array.isArray(d.daily.time) && d.daily.time.length>=1 && d.daily.time.length<=16 &&
-    Array.isArray(d.daily.temperature_2m_max) && d.daily.temperature_2m_max.length===d.daily.time.length;
+    Array.isArray(d.daily.temperature_2m_max) && d.daily.temperature_2m_max.length===d.daily.time.length && Horizon.validSeries(d);
 }
 function cacheIdentifier(place){return `${place.latitude.toFixed(3)},${place.longitude.toFixed(3)}`;}
 function getCaches(){try{const o=JSON.parse(safeStorageGet(CONFIG.cacheKey)||'{}');return o&&typeof o==='object'&&!Array.isArray(o)?o:{};}catch{return {};}}
@@ -471,7 +473,7 @@ const state={
   favorites:Array.isArray(saved.favorites)?saved.favorites.filter(validLocation).slice(0,8).map(normalizeLocation):[],
   units:saved.units==='F'?'F':'C',
   theme:saved.theme==='light'?'light':'dark',
-  data:null,fetchedAt:0,source:'none',loading:false,activeChart:'temp',selectedHour:0,openDay:0,
+  data:null,fetchedAt:0,source:'none',loading:false,activeChart:'temp',selectedHour:0,openDay:0,horizonHours:24,
   searchAbort:null,forecastAbort:null,requestSequence:0,searchSequence:0,searchTimer:null,modalRestoreFocus:null,
   toastTimer:null
 };
@@ -494,6 +496,7 @@ function cityNowParts(tz){
   }catch{return {date:new Date().toISOString().slice(0,10),time:'--:--'};}
 }
 function weatherDetails(code,day=true){
+  if(!isNum(code))return {title:'Condición no disponible',short:'Sin condición',icon:'cloud',scene:'unknown'};
   const c=Number(code);
   if(c===0)return {title:day?'Despejado':'Cielo despejado',short:'Despejado',icon:day?'sun':'moon',scene:'clear'};
   if(c===1)return {title:day?'Mayormente despejado':'Mayormente despejado',short:'Mayormente despejado',icon:day?'sun':'moon',scene:'clear'};
@@ -518,12 +521,7 @@ function hourAt(i){
   const keys=['temperature_2m','apparent_temperature','precipitation_probability','precipitation','weather_code','wind_speed_10m','wind_gusts_10m','wind_direction_10m','uv_index','visibility','relative_humidity_2m'];
   const out={time:h.time[i],index:i};keys.forEach(k=>out[k]=h[k]?.[i]??null);return out;
 }
-function startHourIndex(){
-  const arr=state.data?.hourly?.time||[];
-  const now=state.data?.current?.time?.slice(0,13)||'';
-  const index=arr.findIndex(t=>t.slice(0,13)>=now);
-  return index<0?0:index;
-}
+function startHourIndex(){return Horizon.firstFuture();}
 function nextHours(count=24){
   const start=startHourIndex();
   return (state.data?.hourly?.time||[]).slice(start,start+count).map((_,off)=>hourAt(start+off)).filter(Boolean);
@@ -637,13 +635,13 @@ function drawStats(){
   return `<div class="stats" aria-label="Indicadores meteorológicos">${values.map(x=>`<article class="stat"><div class="stat-head"><span class="stat-icon">${ico(x.icon)}</span>${esc(x.label)}</div><div class="stat-val">${x.val}<small>${esc(x.unit)}</small></div><div class="stat-detail">${esc(x.detail)}</div></article>`).join('')}</div>`;
 }
 function drawHourTiles(){
-  const hours=nextHours(24);
-  return `<div class="hour-strip" id="hourStrip" role="group" aria-label="Seleccionar hora del pronóstico">${hours.map((h,i)=>`<button class="hour-tile ${i===state.selectedHour?'selected':''}" data-hour="${i}" aria-label="${esc(h.time.slice(11,16))} horas; ${tempLabel(h.temperature_2m)}; probabilidad de lluvia ${format(h.precipitation_probability)}%" aria-pressed="${i===state.selectedHour}"><time>${i===0?'Ahora*':esc(h.time.slice(11,16))}</time>${ico(weatherDetails(h.weather_code,isHourDay(h)).icon,'wicon')}<strong>${tempLabel(h.temperature_2m)}</strong><span class="hour-rain">${ico('droplet')} ${format(h.precipitation_probability)}%</span></button>`).join('')}</div><p class="section-sub" style="margin:6px 3px 0">* Primera hora disponible del modelo. Probabilidades horarias, no acumuladas.</p>`;
+  const hours=nextHours(state.horizonHours);
+  return `<div class="hour-strip" id="hourStrip" role="group" aria-label="Seleccionar hora del pronóstico">${hours.map((h,i)=>`<button class="hour-tile ${i===state.selectedHour?'selected':''}" data-hour="${i}" aria-label="${esc(h.time.slice(11,16))} horas; ${tempLabel(h.temperature_2m)}; probabilidad de lluvia ${format(h.precipitation_probability)}%" aria-pressed="${i===state.selectedHour}"><time>${esc(h.time.slice(11,16))}<span class="hour-date">${esc(dayFormat(h.time,{weekday:'short'}))}</span></time>${ico(weatherDetails(h.weather_code,isHourDay(h)).icon,'wicon')}<strong>${tempLabel(h.temperature_2m)}</strong><span class="hour-rain">${ico('droplet')} ${format(h.precipitation_probability)}%</span></button>`).join('')}</div><p class="section-sub" style="margin:6px 3px 0">Horas disponibles desde la hora actual. Probabilidades horarias, no acumuladas. Deslizá para explorar.</p>`;
 }
 function drawDays(){
-  const d=state.data.daily,t=d.time.slice(0,7), current=cityNowParts(state.data.timezone||state.location.timezone).date;
+  const d=state.data.daily,t=d.time.slice(0,10), current=cityNowParts(state.data.timezone||state.location.timezone).date;
   const lows=t.map((_,i)=>take(d,'temperature_2m_min',i)).filter(isNum), highs=t.map((_,i)=>take(d,'temperature_2m_max',i)).filter(isNum);
-  const min=Math.min(...lows,0),max=Math.max(...highs,0),span=Math.max(1,max-min);
+  const min=lows.length?Math.min(...lows):0,max=highs.length?Math.max(...highs):1,span=Math.max(1,max-min);
   return `<div class="day-head"><span>Día</span><span></span><span>Temperatura</span><span>Lluvia</span><span class="day-wind-heading">Viento</span><span></span></div>
   ${t.map((dt,i)=>{
     const lo=take(d,'temperature_2m_min',i), hi=take(d,'temperature_2m_max',i),pct=take(d,'precipitation_probability_max',i);
@@ -655,6 +653,7 @@ function drawDays(){
       <div class="day-detail-card"><small>Ráfagas máximas</small><strong>${windLabel(take(d,'wind_gusts_10m_max',i))}</strong></div>
       <div class="day-detail-card"><small>Índice UV máximo</small><strong>${format(take(d,'uv_index_max',i),1)}</strong></div>
       <div class="day-detail-card"><small>Horas de luz</small><strong>${isNum(take(d,'daylight_duration',i))?format(take(d,'daylight_duration',i)/3600,1)+' h':'—'}</strong></div>
+      <button class="day-detail-link" type="button" data-detail-day="${i}">Explorar la temperatura hora por hora ↗</button>
     </div></div></div>`;
   }).join('')}`;
 }
@@ -696,40 +695,41 @@ function render(){
   if(!state.data)return;
   const advice=advisory();const stale=Date.now()-state.fetchedAt>6*3600000;
   $('appContent').innerHTML=`
-    ${drawHero()}
+    ${Horizon.hero()}
     ${drawBanner()}
     <section aria-labelledby="insightTitle" id="insight">
       <div class="intro-head"><div><div class="section-eyebrow">LO ESENCIAL</div><h2 class="section-title" id="insightTitle">Tu día, de un vistazo.</h2></div><span class="section-sub">${stale?'Referencia de la última consulta':'Resumen según el pronóstico'}</span></div>
       <div class="insight"><span class="insight-icon">${ico(advice.icon)}</span><div class="insight-copy"><strong>${esc(advice.title)}</strong><span>${esc(advice.subtitle)}</span></div><span class="insight-side">Orientativo · no es alerta oficial</span></div>
-      ${drawStats()}
+      ${Horizon.stats()}
     </section>
     <section id="horario" aria-labelledby="hourTitle">
       <div class="intro-head"><div><div class="section-eyebrow">EVOLUCIÓN DEL TIEMPO</div><h2 class="section-title" id="hourTitle">${stale?'Detalle horario guardado':'Las próximas horas.'}</h2></div><span class="section-sub">Seleccioná un punto para ver más datos.</span></div>
-      <div class="panel"><div class="panel-top"><div><h3 class="panel-name">Tendencia de 24 horas</h3><div class="panel-caption" id="chartLabel">Temperatura y precipitación</div></div>
+      <div class="panel"><div class="panel-top"><div><h3 class="panel-name">Tendencia de ${state.horizonHours} horas</h3><div class="panel-caption" id="chartLabel">Temperatura y precipitación</div></div>
         <div class="segmented" role="group" aria-label="Dato del gráfico"><button data-chart="temp" aria-pressed="${state.activeChart==='temp'}">Temperatura</button><button data-chart="rain" aria-pressed="${state.activeChart==='rain'}">Lluvia</button><button data-chart="wind" aria-pressed="${state.activeChart==='wind'}">Viento</button></div></div>
         <div class="chart-wrap"><svg class="weather-chart" viewBox="0 0 940 265" role="img" aria-label="Gráfico interactivo del pronóstico horario" id="weatherChart"></svg></div>
         <div class="chart-hover" id="chartDetails"></div>
       </div>
-      <div class="intro-head" style="margin-top:23px"><div><h3 class="panel-name">Hora por hora</h3><div class="section-sub">Deslizá para explorar las próximas 24 horas.</div></div></div>
+      <div class="intro-head" style="margin-top:23px"><div><h3 class="panel-name">Hora por hora</h3><div class="section-sub">Hora local de la ubicación.</div></div>${Horizon.rangeControl()}</div>
       ${drawHourTiles()}
     </section>
     <div class="two-col">
-      <section class="panel daily-panel" id="semanal" aria-labelledby="weekTitle"><div class="panel-top"><div><div class="section-eyebrow">PRÓXIMOS DÍAS</div><h2 class="panel-name" id="weekTitle">${stale?'Pronóstico guardado · 7 días':'Pronóstico extendido · 7 días'}</h2><div class="panel-caption">Tocá un día para explorar sus detalles.</div></div>${ico('calendar')}</div>${drawDays()}</section>
+      <section class="panel daily-panel" id="semanal" aria-labelledby="weekTitle"><div class="panel-top"><div><div class="section-eyebrow">PRÓXIMOS DÍAS</div><h2 class="panel-name" id="weekTitle">${stale?'Pronóstico guardado':'Pronóstico extendido'} · ${Math.min(10,state.data.daily.time.length)} días</h2><div class="panel-caption">Tocá un día para explorar sus detalles.</div></div>${ico('calendar')}</div>${drawDays()}</section>
       <div class="aside-col" id="detalles">
         <section class="panel sun-panel" aria-label="Horario solar"><div class="panel-top"><div><div class="section-eyebrow">CICLO SOLAR</div><h2 class="panel-name">El recorrido del sol</h2></div>${ico('sun')}</div>${drawSun()}</section>
-        <section aria-label="Información atmosférica"><div class="intro-head" style="margin:5px 0 13px"><div><h3 class="panel-name">Más de la atmósfera</h3><div class="panel-caption">Variables estimadas por modelos.</div></div></div>${drawAtmosphere()}</section>
+        <section aria-label="Información atmosférica"><div class="intro-head" style="margin:5px 0 13px"><div><h3 class="panel-name">Más de la atmósfera</h3><div class="panel-caption">Variables estimadas por modelos.</div></div></div>${Horizon.atmosphere()}</section>
+        ${Horizon.airPanel()}
       </div>
     </div>`;
-  renderChart();attachDynamicEvents();activateAtmosphericScene();
+  renderChart();attachDynamicEvents();Horizon.mount();
   $('hourStrip').scrollLeft=stripLeft;
   if(restore)document.querySelector(restore)?.focus({preventScroll:true});
 }
 function buildWeatherURL(place){
   const p=new URLSearchParams({
-    latitude:String(place.latitude),longitude:String(place.longitude),timezone:'auto',forecast_days:'8',
+    latitude:String(place.latitude),longitude:String(place.longitude),timezone:'auto',forecast_days:'10',
     temperature_unit:'celsius',wind_speed_unit:'kmh',precipitation_unit:'mm',
     current:'temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,cloud_cover,wind_speed_10m,wind_direction_10m,wind_gusts_10m,pressure_msl',
-    hourly:'temperature_2m,apparent_temperature,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,wind_direction_10m,uv_index,visibility,relative_humidity_2m',
+    hourly:'temperature_2m,apparent_temperature,precipitation_probability,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,wind_direction_10m,uv_index,visibility,relative_humidity_2m,dew_point_2m,pressure_msl,cloud_cover',
     daily:'weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,uv_index_max,sunrise,sunset,daylight_duration'
   });
   return `${CONFIG.forecastURL}?${p.toString()}`;
@@ -776,6 +776,7 @@ async function loadLocation(raw,force=false){
   }
 }
 function isHourDay(h){
+  if(!h)return true;
   const dates=state.data.daily.time,idx=dates.indexOf(h.time.slice(0,10));
   const rise=state.data.daily.sunrise?.[idx],set=state.data.daily.sunset?.[idx];
   if(typeof rise==='string' && typeof set==='string')return h.time>=rise && h.time<set;
@@ -790,7 +791,7 @@ function renderChart(){
   if(!state.data || !$('weatherChart'))return;
   cancelMotionWithin($('weatherChart'));
   motionRuntime.chart=null;$('weatherChart').onclick=null;$('weatherChart').onpointermove=null;
-  const hours=nextHours(24),n=hours.length;
+  const hours=nextHours(state.horizonHours),n=hours.length;
   if(n<2){$('chartDetails').textContent='Sin detalle horario disponible.';$('weatherChart').innerHTML='<text x="30" y="130" fill="currentColor">Sin suficientes horas para trazar el gráfico.</text>';return;}
   state.selectedHour=clamp(state.selectedHour,0,n-1);
   const mode=state.activeChart;
@@ -816,7 +817,7 @@ function renderChart(){
     const frac=step/4,yy=y1+(y2-y1)*frac,value=max-(max-min)*frac;
     return `<line x1="${x1}" x2="${x2}" y1="${yy}" y2="${yy}" stroke="var(--stroke)" stroke-width="1" stroke-dasharray="${step===4?'0':'3 7'}"/><text x="${x1-14}" y="${yy+4}" text-anchor="end" font-size="11" fill="var(--subtle)">${format(value,mode==='temp'&&max-min<10?1:0)}</text>`;
   }).join('');
-  const xlabels=hours.map((h,i)=>i%4===0||i===n-1?`<text x="${x(i)}" y="244" text-anchor="middle" font-size="11" fill="var(--subtle)">${esc(h.time.slice(11,13))}:00</text>`:'').join('');
+  const xlabels=hours.map((h,i)=>i%Math.ceil(n/6)===0||i===n-1?`<text x="${x(i)}" y="244" text-anchor="middle" font-size="11" fill="var(--subtle)">${esc(h.time.slice(11,13))}:00</text>`:'').join('');
   const maxMM=Math.max(1,...hours.map(h=>isNum(h.precipitation)?h.precipitation:0));
   const rainBars=mode!=='wind'?hours.map((h,i)=>{
     const v=isNum(h.precipitation)?h.precipitation:0,bh=Math.min(39,(v/maxMM)*36);
@@ -857,6 +858,7 @@ function defaultPlaces(){
   return [...state.favorites,...PRESETS].filter(p=>{const key=cacheIdentifier(p);if(seen.has(key))return false;seen.add(key);return true;});
 }
 function openCityDialog(){
+  Horizon.closeDetails(false);
   if(motionRuntime.modalOpen){$('citySearch').focus();return;}
   state.modalRestoreFocus=document.activeElement;motionRuntime.modalOpen=true;
   cancelMotionWithin($('cityOverlay'));
@@ -924,7 +926,7 @@ function downloadBlob(name,content,mime){
   setTimeout(()=>URL.revokeObjectURL(url),2000);
 }
 function exportBackup(){
-  const backup={format:'atmos-weather-backup',version:1,exportedAt:new Date().toISOString(),location:state.location,favorites:state.favorites,units:state.units,theme:state.theme,forecast:state.data?{fetchedAt:state.fetchedAt,location:state.location,data:state.data}:null};
+  const backup={format:'atmos-weather-backup',version:1,exportedAt:new Date().toISOString(),location:state.location,favorites:state.favorites,units:state.units,theme:state.theme,airQualityCache:Horizon.exportAir(),forecast:state.data?{fetchedAt:state.fetchedAt,location:state.location,data:state.data}:null};
   const name=`atmos-respaldo-${new Date().toISOString().slice(0,10)}.json`;
   downloadBlob(name,JSON.stringify(backup,null,2),'application/json;charset=utf-8');
   showToast('Respaldo descargado. Incluye preferencias y el último pronóstico si está disponible.');
@@ -936,6 +938,7 @@ async function importBackup(file){
     const parsed=JSON.parse(await file.text());
     if(parsed.format!=='atmos-weather-backup'||parsed.version!==1||!validLocation(parsed.location))throw Error('El archivo no corresponde a un respaldo válido de ATMÓS.');
     if(parsed.forecast && (!validLocation(parsed.forecast.location)||!placeEquals(parsed.forecast.location,parsed.location)||!validWeather(parsed.forecast.data)||!isNum(parsed.forecast.fetchedAt)||parsed.forecast.fetchedAt<0||parsed.forecast.fetchedAt>Date.now()+3600000))throw Error('El pronóstico del respaldo está dañado o no corresponde a la ciudad indicada.');
+    Horizon.importAir(parsed.airQualityCache);
     state.location=normalizeLocation(parsed.location);
     state.favorites=Array.isArray(parsed.favorites)?parsed.favorites.filter(validLocation).slice(0,8).map(normalizeLocation):[];
     state.units=parsed.units==='F'?'F':'C';state.theme=parsed.theme==='light'?'light':'dark';
@@ -969,6 +972,7 @@ function playMotion(el,frames,duration=MOTION.local,cleanup=null,extra={}){
   return animation;
 }
 function syncMotionUI(){
+  Horizon.policy();
   const enabled=motionEnabled(),b=$('motionToggle');document.documentElement.dataset.motion=enabled?'on':'off';
   b.setAttribute('aria-pressed',String(enabled));b.setAttribute('aria-label',enabled?'Desactivar movimiento':'Activar movimiento');
   b.title=motionMedia.matches?'Movimiento reducido del sistema: transiciones estáticas':enabled?'Desactivar movimiento':'Activar movimiento';
@@ -1093,7 +1097,7 @@ function drawAtmosphericFrame(t){
   rt.raf=requestAnimationFrame(drawAtmosphericFrame);
 }
 function resumeAtmosphericScene(){/* Hidden/offscreen effects settle, rather than restarting a presentation. */}
-function clearPresentation(){cancelMotionWithin($('appContent'));stopIndicator();stopAtmosphericScene();motionRuntime.chart=null;}
+function clearPresentation(){Horizon.dispose();cancelMotionWithin($('appContent'));stopIndicator();stopAtmosphericScene();motionRuntime.chart=null;}
 function motionSnapshot(){return Object.freeze({active:motionRuntime.active.size,spring:!!motionRuntime.spring,particles:motionRuntime.particles.length,raf:!!motionRuntime.raf,observers:Number(!!motionRuntime.observer)+Number(!!motionRuntime.resizeObserver),ghosts:document.querySelectorAll('[data-motion-ghost]').length,enabled:motionEnabled()});}
 
 function wire(){
@@ -1158,6 +1162,9 @@ function wire(){
   window.addEventListener('resize',()=>{for(const el of [...motionRuntime.active.keys()])cancelMotion(el);syncIndicator(false);stopAtmosphericScene();});
   setInterval(()=>{updateHeader();},60000);
 }
+</script>
+<script src="./horizon.js"></script>
+<script>
 wire();syncMotionUI();updateHeader();updateFavorites();loadLocation(state.location);
 if ('serviceWorker' in navigator && location.protocol === 'https:' ||
     ('serviceWorker' in navigator && location.hostname === 'localhost')) {

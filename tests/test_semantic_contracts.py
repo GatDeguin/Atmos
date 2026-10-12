@@ -4,6 +4,7 @@ are explicitly not verified. Run from repository root: python tests/test_semanti
 """
 import json, os, time, sys
 from pathlib import Path
+from helpers import inline_html
 from playwright.sync_api import sync_playwright
 from test_motion import fixture, PROBE
 ROOT=Path(__file__).resolve().parents[1]
@@ -18,14 +19,14 @@ def test(name,fn):
 
 def run():
  with sync_playwright() as pw:
-  browser=pw.chromium.launch(executable_path=os.environ.get('CHROMIUM_PATH','/usr/bin/chromium'),headless=True,args=['--no-sandbox'])
+  browser=pw.chromium.launch(executable_path=os.environ.get('CHROMIUM_PATH','/usr/bin/chromium'),headless=True,args=['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader'])
   def create(width=1440,height=1000,reduced='no-preference',disable=False,code=61,touch=False):
     ctx=browser.new_context(viewport=dict(width=width,height=height),reduced_motion=reduced,has_touch=touch,is_mobile=touch,service_workers='block')
     p=ctx.new_page();p.set_default_timeout(3000);p.on('pageerror',lambda e:errors.append(str(e)))
     p.evaluate(PROBE)
     if disable:p.evaluate('Element.prototype.animate=undefined;window.IntersectionObserver=undefined;window.ResizeObserver=undefined')
     p.evaluate('''d=>{window.__fixture=d;window.__requests=0;window.fetch=async(url,options)=>{window.__requests++;if(options?.signal?.aborted)throw new DOMException('Aborted','AbortError');return new Response(JSON.stringify(String(url).includes('geocoding')?{results:[{name:'Córdoba',latitude:-31.4135,longitude:-64.1811,country:'Argentina'}]}:d),{status:200,headers:{'Content-Type':'application/json'}})}}''',fixture(code))
-    p.set_content((ROOT/'index.html').read_text(),wait_until='load');p.wait_for_selector('.hour-tile');return p,ctx
+    p.set_content(inline_html(ROOT/'index.html'),wait_until='load');p.wait_for_selector('.hour-tile');return p,ctx
   p,c=create()
   def settle():p.wait_for_function('motionSnapshot().active===0 && !motionSnapshot().spring',timeout=3000)
   def repeated_modal():
@@ -97,7 +98,7 @@ def run():
     expect(p.evaluate('state.location.latitude===-31.4135'), 'selected wrong coordinates');return {'city':p.locator('#headerCity').inner_text()}
   test('Real search/select flow against controlled API responses',search)
   def stale():
-    r=p.evaluate('''async()=>{let resolve;window.fetch=()=>new Promise(r=>resolve=r);const slow=loadLocation(PRESETS[2]);window.fetch=async()=>new Response(JSON.stringify(window.__fixture),{status:200});await loadLocation(PRESETS[3]);resolve(new Response(JSON.stringify(window.__fixture),{status:200}));await slow;return {name:state.location.name,loading:state.loading,hero:document.querySelector('.hero-kicker').textContent}}''')
+    r=p.evaluate('''async()=>{let resolve;window.fetch=()=>new Promise(r=>resolve=r);const slow=loadLocation(PRESETS[2]);window.fetch=async()=>new Response(JSON.stringify(window.__fixture),{status:200});await loadLocation(PRESETS[3]);resolve(new Response(JSON.stringify(window.__fixture),{status:200}));await slow;return {name:state.location.name,loading:state.loading,hero:document.querySelector('.horizon-city').textContent}}''')
     expect(r['name']=='Mendoza' and not r['loading'] and 'Mendoza' in r['hero'],str(r));return r
   test('Late response cannot overwrite latest city during motion',stale)
   def error_case():
