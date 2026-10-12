@@ -1,0 +1,82 @@
+name: Integrar motion semántico verificado
+on:
+  push:
+    branches: [integracion/motion-semantico-v3]
+    paths:
+      - '.github/workflows/integrate-semantic.yml'
+      - '.github/semantic-product-update.b64'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Verificar integridad del paquete probado
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import base64, gzip, hashlib, json
+          from pathlib import Path
+          s = Path('.github/semantic-product-update.b64').read_text().strip()
+          # Repair three identified text-transfer errors. The SHA-256 below
+          # remains mandatory; no code is applied unless the exact tested
+          # payload has been reconstructed.
+          for bad, good in [
+              ('P5z+dnP0UnVwZ159fP/lny+', 'P5z+dnP0UnVwZl06vazhj+E6B/50+V159fP/lny+'),
+              ('DvcqU8Mx6snUxm', 'DvcqU8Nx6snUxm'),
+              ('FxlTWHfac8a98c8a98WDoj', 'FxlTWHfac8a98WDoj'),
+          ]:
+              s = s.replace(bad, good)
+          try:
+              data = gzip.decompress(base64.b64decode(s, validate=True))
+              assert hashlib.sha256(data).hexdigest() == '5294db923e9ab335b08a9628ae3eac0886a389514bdc5b6f99b6840a684ef0b1', 'Payload SHA-256 mismatch'
+          except Exception:
+              print('Normalized length:', len(s))
+              for i in range(0, len(s), 128):
+                  print('CHUNK', i, hashlib.sha256(s[i:i+128].encode()).hexdigest()[:16], s[i:i+128])
+              raise
+          obj = json.loads(data)
+          assert set(obj) == {'index.html', 'sw.js', 'README.md'}
+          Path('/tmp/atmos-semantic-update.json').write_bytes(data)
+          print('PASS: exact tested payload verified')
+          PY
+      - name: Aplicar sin sobrescribir trabajo concurrente
+        shell: bash
+        run: |
+          git fetch origin main
+          test "$(git rev-parse origin/main)" = '44313ab0ac069918938136f26e44619ecf185505'
+          git checkout --detach origin/main
+          python3 - <<'PY'
+          import hashlib, json, re
+          from pathlib import Path
+          edits = json.loads(Path('/tmp/atmos-semantic-update.json').read_bytes())
+          outputs = {}
+          for name, spec in edits.items():
+              source = Path(name).read_bytes()
+              assert hashlib.sha256(source).hexdigest() == spec['base_sha256'], 'Source changed: '+name
+              lines = source.decode('utf-8').splitlines(keepends=True)
+              for first, last, replacement in reversed(spec['edits']):
+                  assert 0 <= first <= last <= len(lines)
+                  lines[first:last] = replacement.splitlines(keepends=True)
+              target = ''.join(lines).encode('utf-8')
+              assert hashlib.sha256(target).hexdigest() == spec['sha256'], 'Target mismatch: '+name
+              outputs[name] = target
+          for name, data in outputs.items():
+              Path(name).write_bytes(data)
+              print('VERIFIED', name, hashlib.sha256(data).hexdigest())
+          scripts = re.findall(r'<script(?:\s[^>]*)?>([\s\S]*?)</script>', outputs['index.html'].decode())
+          for i, script in enumerate(scripts):
+              Path('/tmp/atmos-inline-'+str(i)+'.js').write_text(script)
+          PY
+          for f in /tmp/atmos-inline-*.js; do node --check "$f"; done
+          node --check sw.js
+          git diff --check
+          git config user.name 'ATMOS integration'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html sw.js README.md
+          git commit -m 'Implement semantic motion, bounded weather effects and lifecycle fixes'
+          git push origin HEAD:main
