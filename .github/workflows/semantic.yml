@@ -1,0 +1,61 @@
+name: Verificar motion semántico
+
+on:
+  push:
+    branches: [main, 'feat/**']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      ATMOS_EVIDENCE: test-results
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Preparar Chromium
+        run: |
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium
+          python - <<'PY'
+          import os
+          from playwright.sync_api import sync_playwright
+          with sync_playwright() as p:
+              with open(os.environ['GITHUB_ENV'], 'a') as f:
+                  f.write('CHROMIUM_PATH=' + p.chromium.executable_path + '\n')
+          PY
+      - name: Regresiones sobre HTTP y contratos de interrupción
+        run: |
+          mkdir -p test-results
+          python -m http.server 8765 --bind 127.0.0.1 > test-results/server.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          python - <<'PY'
+          import time, urllib.request
+          for attempt in range(50):
+              try:
+                  with urllib.request.urlopen('http://127.0.0.1:8765/', timeout=2) as response:
+                      assert response.status == 200
+                  break
+              except OSError:
+                  if attempt == 49:
+                      raise
+                  time.sleep(0.1)
+          PY
+          python tests/test_motion.py --url http://127.0.0.1:8765/ --output test-results/regressions.json
+          python tests/test_semantic_contracts.py
+      - name: Conservar resultados y capturas
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: atmos-semantic-evidence
+          path: test-results/
+          if-no-files-found: warn
+          retention-days: 14
