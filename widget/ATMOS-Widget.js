@@ -23,7 +23,8 @@ function placeFromParameter(raw) {
 const place = placeFromParameter(args.widgetParameter);
 
 function weatherType(code, day) {
-  const c = Number(code);
+  const c = code;
+  if (typeof c !== 'number' || !Number.isFinite(c) || c < 0) return {label:'Sin condición',icon:'cloud.fill',emoji:'☁️'};
   if (c === 0) return { label: day ? 'Despejado' : 'Cielo despejado', icon: day ? 'sun.max.fill' : 'moon.stars.fill', emoji: day ? '☀️' : '🌙' };
   if (c <= 3) return { label: c === 1 ? 'Mayormente despejado' : c === 2 ? 'Parcialmente nublado' : 'Nublado', icon: day ? 'cloud.sun.fill' : 'cloud.moon.fill', emoji: '⛅' };
   if (c === 45 || c === 48) return { label: 'Niebla', icon: 'cloud.fog.fill', emoji: '🌫️' };
@@ -73,7 +74,7 @@ function cachedForecast() {
   try {
     if (!cacheManager.fileExists(cacheFile)) return null;
     const raw = JSON.parse(cacheManager.readString(cacheFile));
-    return validForecast(raw.forecast) && typeof raw.fetchedAt === 'number' ? raw : null;
+    return validForecast(raw.forecast) && typeof raw.fetchedAt === 'number' && Number.isFinite(raw.fetchedAt) && raw.fetchedAt > 0 && raw.fetchedAt <= Date.now() + 300000 ? raw : null;
   } catch (e) { return null; }
 }
 async function fetchForecast() {
@@ -149,7 +150,7 @@ if (!record) {
     addIcon(w, 'wifi.slash', 25, P.golden);
     w.addSpacer(7);
     addTxt(w, 'Sin conexión', 20, P.white, 'bold');
-    addTxt(w, 'Abrí la app con Internet', 10, P.secondary);
+    addTxt(w, 'Ejecutá este script con Internet', 10, P.secondary);
   }
 } else if (accessory) {
   if (family === 'accessoryInline') {
