@@ -1,0 +1,81 @@
+name: Integrar y verificar Horizon 4
+on:
+  push:
+    branches: [feat/horizon-v4]
+    paths: ['.github/workflows/assemble-horizon.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: assemble-horizon-v4
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.ref == 'refs/heads/feat/horizon-v4'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      ATMOS_EVIDENCE: test-results
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/horizon-v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Integración reproducible y comprobación de integridad
+        run: |
+          python scripts/upgrade_horizon.py
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib
+          expected = {
+            'index.html': 'c503b1268a598c436a3a5d7c66637543320f3dbe',
+            'horizon.js': 'f39de0b5b7307431578e66074244addffc55f33d',
+            'horizon.css': '09d0e7c07fff3e3429952bb78a18f782eca16677',
+            'sw.js': '8a2d2d82e3de6313c466829c9d131d1653c19962',
+            'tests/test_motion.py': '9280be880066e23a0431752e0de79dbf5e61acba',
+            'tests/test_semantic_contracts.py': 'a23d3aadea8c39f88a095796feea1f9dd09bf1c2'
+          }
+          for path, wanted in expected.items():
+              b = Path(path).read_bytes()
+              actual = hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+              assert actual == wanted, (path, actual, wanted)
+              print(path, actual)
+          PY
+          node --check horizon.js
+          node --check sw.js
+      - name: Preparar pruebas de navegador
+        run: |
+          python -m pip install playwright==1.57.0 pillow
+          python -m playwright install --with-deps chromium
+          python - <<'PY'
+          import os
+          from playwright.sync_api import sync_playwright
+          with sync_playwright() as p:
+              with open(os.environ['GITHUB_ENV'], 'a') as f:
+                  f.write('CHROMIUM_PATH=' + p.chromium.executable_path + '\n')
+          PY
+      - name: Contratos reales de interfaz y WebGL con datos sintéticos
+        run: |
+          mkdir -p test-results
+          xvfb-run -a python tests/test_motion.py --url "inline:$PWD/index.html" --output test-results/regressions.json
+          xvfb-run -a python tests/test_semantic_contracts.py
+          xvfb-run -a python tests/test_horizon.py
+      - name: Guardar integración verificada en la misma rama
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html sw.js tests/test_motion.py tests/test_semantic_contracts.py
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "feat: integrate verified Horizon UI, 3D and extended forecasts"
+          git push origin HEAD:feat/horizon-v4
+      - name: Conservar pruebas y capturas
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: atmos-horizon-v4-evidence
+          path: |
+            test-results/
+            docs/evidence/v4/
+          retention-days: 14
