@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es-AR">
+<html lang="es-AR" data-motion="off">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -241,55 +241,50 @@
     @media (max-width:740px) { .topbar {align-items:flex-start;flex-direction:column;gap:14px;} .topbar .header-actions {width:100%;justify-content:space-between} .location-btn {flex:1;max-width:none;} .hero {grid-template-columns:1fr;min-height:333px;padding:28px;border-radius:23px;} .hero-side {position:absolute;inset:0;pointer-events:none;} .hero-side .hero-weather-symbol {position:absolute;top:55px;right:25px;width:89px;height:89px;margin:0;opacity:.72;} .hero-side-info {display:none;} .hero-temp {font-size:112px;letter-spacing:-9px;margin-top:23px;} .hero-desc {font-size:25px;max-width:290px;} .hero .orb {right:7%;width:135px;height:135px;top:-12px;} .hero-chips {margin-top:21px;gap:6px;} .hero-chip {font-size:11px;padding:7px 9px;} .insight-side {display:none;} .two-col {grid-template-columns:1fr;} .day-head,.day-btn {grid-template-columns:95px 32px 1fr 59px 16px;} .day-detail {grid-template-columns:repeat(4,minmax(0,1fr));} .aside-col {display:grid;grid-template-columns:1fr 1fr;} .atm-grid {grid-template-columns:1fr;} .sun-graphic {max-width:245px;} }
     @media (max-width:540px) { .main {padding:18px 13px 27px;} .topbar {padding:0 4px} .header-actions{gap:7px;} .pill {padding:9px 10px;font-size:10px} .location-btn {min-width:0} .icon-btn {min-width:38px;height:39px;padding:0 9px} .hero {padding:26px 21px;border-radius:20px;min-height:325px;} .hero-temp {font-size:104px} .hero-desc{font-size:24px;} .hero-side .hero-weather-symbol {top:54px;right:13px;width:70px;height:70px;}.intro-head {margin-top:27px;} .stats {gap:9px;} .stat {min-height:131px;padding:14px;border-radius:15px;} .stat-head {font-size:10.5px;gap:7px;} .stat-icon{width:27px;height:27px} .stat-val{font-size:25px} .panel {padding:18px 13px;border-radius:20px} .panel-top {align-items:flex-start;flex-direction:column;gap:11px;margin-bottom:17px;} .segmented {width:100%;} .segmented button {flex:1;} .day-head,.day-btn {grid-template-columns:65px 27px minmax(0,1fr) 42px 14px;gap:5px} .day-label {font-size:11px;} .day-temps{gap:3px;font-size:11px;} .day-rain{font-size:10px;} .day-detail {grid-template-columns:1fr 1fr;} .day-detail-card strong {font-size:12px;} .aside-col{grid-template-columns:1fr;} .atm-grid {grid-template-columns:repeat(2,minmax(0,1fr))} .hour-tile{flex-basis:82px} .chart-hover{gap:11px} .chart-metric{font-size:10px} .bottom-foot{flex-direction:column-reverse;gap:14px;} .insight{padding:14px;gap:11px} .insight-icon{width:39px;height:39px} .insight-copy strong{font-size:12px} .insight-copy span{font-size:11px} .modal{padding:18px;border-radius:16px} }
 
-    /* ATMÓS Motion System v2 — kinetic weather storytelling (GPU-friendly). */
-    :root { --motion-curve: cubic-bezier(.22,1,.36,1); }
-    .motion-toggle[aria-pressed="true"] {border-color:rgba(140,226,217,.48);color:var(--accent);background:rgba(140,226,217,.07);}
-    .motion-toggle[aria-pressed="false"] {color:var(--subtle);}
-    .motion-toggle .icon {width:19px;height:19px;}
-    .hero .atmos-ambient {position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.78;contain:strict;}
-    .hero-main,.hero-side {isolation:isolate;}
-    @keyframes motion-hero-enter {from {opacity:.58; transform:translate3d(0,14px,0) scale(.982);} to {opacity:1;transform:translate3d(0,0,0) scale(1);}}
-    @keyframes motion-rise {from {opacity:0;transform:translate3d(0,18px,0);}to {opacity:1;transform:translate3d(0,0,0);}}
-    @keyframes motion-flare {0%,100%{opacity:.88;transform:scale(.98) translate3d(0,0,0);}50%{opacity:1;transform:scale(1.055) translate3d(0,-5px,0);}}
-    @keyframes motion-float {0%,100%{transform:translate3d(0,0,0) rotate(-2deg);}50%{transform:translate3d(0,-8px,0) rotate(2deg);}}
-    @keyframes motion-ring {0%,100%{transform:scale(1);opacity:.85;}50%{transform:scale(1.04);opacity:1;}}
-    @keyframes motion-track-grow {from{transform:scaleX(.08);opacity:.35;}to{transform:scaleX(1);opacity:1;}}
-    :root[data-motion="on"] .hero {animation:motion-hero-enter .82s var(--motion-curve) both;}
-    :root[data-motion="on"] .hero-main>* {animation:motion-rise .7s var(--motion-curve) both;}
-    :root[data-motion="on"] .hero-main>*:nth-child(1){animation-delay:.08s;}
-    :root[data-motion="on"] .hero-main>*:nth-child(2){animation-delay:.14s;}
-    :root[data-motion="on"] .hero-main>*:nth-child(3){animation-delay:.22s;}
-    :root[data-motion="on"] .hero-main>*:nth-child(4){animation-delay:.29s;}
-    :root[data-motion="on"] .hero-main>*:nth-child(5){animation-delay:.36s;}
-    :root[data-motion="on"] .hero .orb {animation:motion-flare 10s ease-in-out infinite;translate:var(--orb-mx,0px) var(--orb-my,0px);transition:translate .5s var(--motion-curve);}
-    :root[data-motion="on"] .hero .cloud-art {animation:cloud-drift 19s ease-in-out infinite alternate;}
-    :root[data-motion="on"] .hero .hero-weather-symbol {animation:motion-float 7s ease-in-out infinite;transform-origin:center;}
-    :root[data-motion="on"] .hero::after {animation:motion-ring 12s ease-in-out infinite;}
-    :root[data-motion="on"] .intro-head {animation:motion-rise .65s var(--motion-curve) both;animation-delay:.12s;}
-    :root[data-motion="on"] .insight {animation:motion-rise .69s var(--motion-curve) .18s both;}
-    :root[data-motion="on"] .stats .stat {animation:motion-rise .7s var(--motion-curve) both;}
-    :root[data-motion="on"] .stats .stat:nth-child(1) {animation-delay:.23s;}
-    :root[data-motion="on"] .stats .stat:nth-child(2) {animation-delay:.30s;}
-    :root[data-motion="on"] .stats .stat:nth-child(3) {animation-delay:.37s;}
-    :root[data-motion="on"] .stats .stat:nth-child(4) {animation-delay:.44s;}
-    :root[data-motion="on"] #horario .panel {animation:motion-rise .75s var(--motion-curve) .27s both;}
-    :root[data-motion="on"] .hour-tile:nth-child(-n+7) {animation:motion-rise .6s var(--motion-curve) both;}
-    :root[data-motion="on"] .hour-tile:nth-child(1){animation-delay:.22s;}
-    :root[data-motion="on"] .hour-tile:nth-child(2){animation-delay:.28s;}
-    :root[data-motion="on"] .hour-tile:nth-child(3){animation-delay:.34s;}
-    :root[data-motion="on"] .hour-tile:nth-child(4){animation-delay:.40s;}
-    :root[data-motion="on"] .hour-tile:nth-child(5){animation-delay:.46s;}
-    :root[data-motion="on"] .hour-tile:nth-child(6){animation-delay:.52s;}
-    :root[data-motion="on"] .hour-tile:nth-child(7){animation-delay:.58s;}
-    :root[data-motion="on"] .range-fill {transform-origin:left center;animation:motion-track-grow .8s var(--motion-curve) both;}
-    .day-detail:not([hidden]) {animation:motion-rise .35s var(--motion-curve) both;}
-    .segmented button,.hour-tile,.side-item,.icon-btn,.day-btn,.action-mini,.favorite .fav-open {transition:background .22s,border-color .22s,color .22s,box-shadow .24s,transform .24s var(--motion-curve);}
-    .icon-btn:active,.hour-tile:active,.segmented button:active,.day-btn:active {transform:scale(.965);}
-    .hour-tile.selected {box-shadow:inset 0 0 0 1px rgba(137,225,216,.14),0 9px 32px rgba(32,154,149,.09);transform:translateY(-3px);}
-    :root[data-motion="off"] .hero .orb,:root[data-motion="off"] .hero .cloud-art,:root[data-motion="off"] .rain-art,:root[data-motion="off"] .hero .hero-weather-symbol,:root[data-motion="off"] .loading-pulse,:root[data-motion="off"] .spinning {animation:none!important;}
-    :root[data-motion="off"] .hero .atmos-ambient {display:none;}
-    @media (max-width:540px) {:root[data-motion="on"] .hero .hero-weather-symbol {animation-duration:9s;} }
-    @media (prefers-reduced-motion: reduce) { *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important} }
+    /* ATMÓS semantic motion — shared grammar, no continuous decoration. */
+    :root {
+      --motion-confirm:110ms;--motion-local:180ms;--motion-context:260ms;--motion-layout:240ms;
+      --motion-trace:380ms;--motion-step:24ms;--motion-delay-max:120ms;--motion-distance:6px;
+      --motion-omega:24;--motion-burst:3000ms;--motion-particle-cap:48;--motion-dpr-cap:1.5;
+      --motion-arrive:cubic-bezier(.2,.8,.2,1);--motion-exit:cubic-bezier(.4,0,1,1);
+    }
+    .motion-toggle[aria-pressed="true"]{border-color:rgba(140,226,217,.48);color:var(--accent);background:rgba(140,226,217,.07)}
+    .motion-toggle[aria-pressed="false"]{color:var(--subtle)}
+    .hero .atmos-ambient{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;border-radius:inherit}
+    .hero .orb,.hero .cloud-art,.hero .rain-art,.hero-weather-symbol,.hero::after,.loading-pulse{animation:none!important}
+    .hero .rain-art{display:none} /* Canvas depicts a short qualitative event, not rainfall quantity. */
+    .stat:hover{transform:none}
+    .icon-btn,.hour-tile,.place-item,.day-btn{transition:background-color var(--motion-local),border-color var(--motion-local),color var(--motion-local)}
+    .icon-btn{position:relative}
+    .icon-btn>.icon:not(.spinning){transition:transform var(--motion-confirm) var(--motion-arrive)}
+    @media(hover:hover) and (pointer:fine){:root[data-motion="on"] .icon-btn:hover>.icon:not(.spinning){transform:scale(1.08)}}
+    :root[data-motion="on"] .icon-btn:focus-visible>.icon:not(.spinning){transform:scale(1.08)}
+    :root[data-motion="on"] .icon-btn:active>.icon:not(.spinning){transform:scale(.94)}
+    .icon-btn:focus-visible,.place-item:focus-visible,.hour-tile:focus-visible,.day-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+    .segmented{position:relative;isolation:isolate}
+    .segmented button{position:relative;z-index:1;transition:color var(--motion-confirm)}
+    .segmented:has(.selection-marker) button[aria-pressed="true"]{background:transparent;box-shadow:none}
+    .selection-marker{position:absolute;left:0;top:4px;bottom:4px;pointer-events:none;z-index:0;background:var(--surface);border-radius:8px;box-shadow:0 1px 5px rgba(0,0,0,.1)}
+    .day-detail-region[hidden]{display:none!important}
+    .day-detail-region{overflow:visible}
+    .day-detail{animation:none}
+    .day-chevron{transition:transform var(--motion-local) var(--motion-arrive)}
+    @media(max-width:540px){
+      .header-actions{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+      .header-actions .pill{grid-column:span 2;min-width:0;max-width:100%;padding:9px 8px}
+      #networkText{min-width:0;overflow:hidden;text-overflow:ellipsis}
+      .header-actions .location-btn{grid-column:span 3;min-width:0;max-width:none;width:100%}
+      .header-actions .location-btn>.icon{flex-shrink:0}
+      .header-actions>.icon-btn:not(.location-btn){width:100%;height:42px}
+    }
+    .modal-overlay{backdrop-filter:none;background:rgba(2,12,23,.84)}
+    .toast{transition:transform var(--motion-local) var(--motion-arrive),opacity var(--motion-local)}
+    .toast:not(.show){transform:translateY(12px)}
+    :root[data-motion="off"] *, :root[data-motion="off"] *::before, :root[data-motion="off"] *::after {
+      animation:none!important;transition:none!important;scroll-behavior:auto!important;
+    }
+    :root[data-motion="off"] .atmos-ambient{display:none}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
   </style>
 </head>
 <body>
@@ -389,11 +384,12 @@
     <div class="modal-secondary"><button id="geoBtn"><svg class="icon"><use href="#ic-navigation"/></svg>Usar mi ubicación</button><span style="font-size:10px;color:var(--subtle)">Permiso solicitado sólo al pulsar</span></div>
   </div>
 </div>
+<div id="motionStatus" class="visually-hidden" role="status" aria-live="polite" aria-atomic="true"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <input type="file" id="importFile" accept="application/json,.json" hidden />
 <script>
 'use strict';
-/* ATMÓS 1.0 · Implementación sin dependencias externas. No inventa observaciones ni alertas oficiales. */
+/* ATMÓS 3.0 · Implementación sin dependencias externas. No inventa observaciones ni alertas oficiales. */
 const CONFIG = Object.freeze({
   forecastURL:'https://api.open-meteo.com/v1/forecast',
   geocodingURL:'https://geocoding-api.open-meteo.com/v1/search',
@@ -579,18 +575,27 @@ function updateHeader(){
   $('networkText').textContent=txt;
   $('lastSource').textContent=state.data?`Datos ${state.source==='live'?'consultados':state.source==='imported'?'importados':'guardados'}: ${new Date(state.fetchedAt).toLocaleString('es-AR',{dateStyle:'medium',timeStyle:'short'})}. Coordenadas aprox.: ${format(state.location.latitude,3)}°, ${format(state.location.longitude,3)}°.`:'No hay un pronóstico disponible todavía.';
   document.documentElement.dataset.theme=state.theme;
-  $('themeToggle').innerHTML=ico(state.theme==='dark'?'sun':'moon');
+  crossfadeThemeIcon($('themeToggle'),state.theme==='dark'?'sun':'moon');
   $('themeToggle').setAttribute('aria-label',state.theme==='dark'?'Activar tema claro':'Activar tema oscuro');
 }
 function updateFavorites(){
+  const signature=state.favorites.map(p=>cacheIdentifier(p)+'|'+p.name).join(';');
+  if($('favoriteList').dataset.signature===signature)return;
+  const before=captureFavoritePositions(),focused=document.activeElement;
+  const removedFocus=$('favoriteList').contains(focused),focusIndex=removedFocus?Number(focused.dataset.removeFav??focused.dataset.fav):0;
+  cancelMotionWithin($('favoriteList'));
+  $('favoriteList').dataset.signature=signature;
   const element=$('favoriteList');
-  element.innerHTML=state.favorites.length?state.favorites.map((p,i)=>`<div class="favorite"><button class="side-item fav-open" data-fav="${i}" title="${esc(p.name)}">${ico('pin')}${esc(p.name)}</button><button class="fav-remove" data-remove-fav="${i}" aria-label="Eliminar ${esc(p.name)} de favoritos">${ico('x')}</button></div>`).join(''):`<div style="font-size:11px;color:var(--subtle);padding:0 12px 9px">Todavía no agregaste ciudades.</div>`;
+  element.innerHTML=state.favorites.length?state.favorites.map((p,i)=>`<div class="favorite" data-place-key="${esc(cacheIdentifier(p))}"><button class="side-item fav-open" data-fav="${i}" title="${esc(p.name)}">${ico('pin')}${esc(p.name)}</button><button class="fav-remove" data-remove-fav="${i}" aria-label="Eliminar ${esc(p.name)} de favoritos">${ico('x')}</button></div>`).join(''):`<div style="font-size:11px;color:var(--subtle);padding:0 12px 9px">Todavía no agregaste ciudades.</div>`;
+  animateFavorites(before);
+  if(removedFocus){const buttons=element.querySelectorAll('[data-remove-fav]');(buttons[Math.min(focusIndex,buttons.length-1)]||$('addCitySide')).focus({preventScroll:true});}
 }
 function showToast(message){
   const el=$('toast');el.textContent=message;el.classList.add('show');
   clearTimeout(state.toastTimer);state.toastTimer=setTimeout(()=>el.classList.remove('show'),3800);
 }
 function renderError(message){
+  clearPresentation();
   $('appContent').innerHTML=`<section class="empty-screen" aria-live="polite">${ico('cloud-off')}<h2>No podemos consultar el clima</h2><p>${esc(message)}. Conectate a Internet para obtener un pronóstico o seleccioná una ciudad que ya hayas consultado y guardado en este navegador.</p><div style="display:flex;gap:9px;flex-wrap:wrap;justify-content:center"><button class="primary-btn" id="retryError">Reintentar conexión</button><button class="action-mini" id="cityError">Cambiar ciudad</button></div></section>`;
   $('retryError').addEventListener('click',()=>loadLocation(state.location,true));
   $('cityError').addEventListener('click',openCityDialog);
@@ -645,12 +650,12 @@ function drawDays(){
     const left=isNum(lo)?(lo-min)/span*100:0,width=isNum(lo)&&isNum(hi)?Math.max(3,(hi-lo)/span*100):0;
     const iconName=weatherDetails(take(d,'weather_code',i)).icon;
     return `<div class="day-item"><button class="day-btn" data-day="${i}" aria-expanded="${state.openDay===i}" aria-controls="day-detail-${i}"><span class="day-label">${esc(labelDay(dt,current))}</span>${ico(iconName,'wicon')}<span class="day-temps"><span class="low">${tempLabel(lo)}</span><span class="range-track"><span class="range-fill" style="left:${left.toFixed(2)}%;width:${width.toFixed(2)}%"></span></span><span>${tempLabel(hi)}</span></span><span class="day-rain">${isNum(pct)?format(pct)+'%':'—'}</span><span class="day-wind">${windLabel(take(d,'wind_speed_10m_max',i),true)}</span>${ico('chevron-right','day-chevron')}</button>
-    <div id="day-detail-${i}" class="day-detail" ${state.openDay===i?'':'hidden'}>
+    <div id="day-detail-${i}" class="day-detail-region" aria-hidden="${state.openDay!==i}" ${state.openDay===i?'':'hidden'}><div class="day-detail">
       <div class="day-detail-card"><small>Precipitación prevista</small><strong>${mm(take(d,'precipitation_sum',i))} mm</strong></div>
       <div class="day-detail-card"><small>Ráfagas máximas</small><strong>${windLabel(take(d,'wind_gusts_10m_max',i))}</strong></div>
       <div class="day-detail-card"><small>Índice UV máximo</small><strong>${format(take(d,'uv_index_max',i),1)}</strong></div>
       <div class="day-detail-card"><small>Horas de luz</small><strong>${isNum(take(d,'daylight_duration',i))?format(take(d,'daylight_duration',i)/3600,1)+' h':'—'}</strong></div>
-    </div></div>`;
+    </div></div></div>`;
   }).join('')}`;
 }
 function mins(str){const m=String(str||'').match(/(\d\d):(\d\d)$/);return m?Number(m[1])*60+Number(m[2]):null;}
@@ -683,6 +688,10 @@ function drawAtmosphere(){
   return `<div class="atm-grid">${vals.map(x=>`<div class="mini-stat"><div class="mini-label">${ico(x.icon)}${esc(x.name)}</div><strong>${x.value}</strong><small>${esc(x.unit)}</small></div>`).join('')}</div>`;
 }
 function render(){
+  const focused=document.activeElement;
+  const restore=focused?.dataset?.hour!==undefined?`[data-hour="${focused.dataset.hour}"]`:focused?.dataset?.chart?`[data-chart="${focused.dataset.chart}"]`:focused?.dataset?.day!==undefined?`[data-day="${focused.dataset.day}"]`:null;
+  const stripLeft=$('hourStrip')?.scrollLeft||0;
+  clearPresentation();
   updateHeader();updateFavorites();
   if(!state.data)return;
   const advice=advisory();const stale=Date.now()-state.fetchedAt>6*3600000;
@@ -699,7 +708,7 @@ function render(){
       <div class="panel"><div class="panel-top"><div><h3 class="panel-name">Tendencia de 24 horas</h3><div class="panel-caption" id="chartLabel">Temperatura y precipitación</div></div>
         <div class="segmented" role="group" aria-label="Dato del gráfico"><button data-chart="temp" aria-pressed="${state.activeChart==='temp'}">Temperatura</button><button data-chart="rain" aria-pressed="${state.activeChart==='rain'}">Lluvia</button><button data-chart="wind" aria-pressed="${state.activeChart==='wind'}">Viento</button></div></div>
         <div class="chart-wrap"><svg class="weather-chart" viewBox="0 0 940 265" role="img" aria-label="Gráfico interactivo del pronóstico horario" id="weatherChart"></svg></div>
-        <div class="chart-hover" id="chartDetails" aria-live="polite"></div>
+        <div class="chart-hover" id="chartDetails"></div>
       </div>
       <div class="intro-head" style="margin-top:23px"><div><h3 class="panel-name">Hora por hora</h3><div class="section-sub">Deslizá para explorar las próximas 24 horas.</div></div></div>
       ${drawHourTiles()}
@@ -712,6 +721,8 @@ function render(){
       </div>
     </div>`;
   renderChart();attachDynamicEvents();activateAtmosphericScene();
+  $('hourStrip').scrollLeft=stripLeft;
+  if(restore)document.querySelector(restore)?.focus({preventScroll:true});
 }
 function buildWeatherURL(place){
   const p=new URLSearchParams({
@@ -744,6 +755,7 @@ async function loadLocation(raw,force=false){
   if(cache && (switchPlace||!state.data)){
     state.data=cache.data;state.fetchedAt=cache.fetchedAt;state.source='cached';render();
   }else if(!state.data){
+    clearPresentation();
     $('appContent').innerHTML=`<section class="hero loading-pulse" aria-label="Cargando el pronóstico"><div class="hero-main"><div class="hero-kicker">CONSULTANDO EL PRONÓSTICO</div><div class="hero-temp">—<sup>°</sup></div><h1 class="hero-desc">El cielo está por revelarse</h1><div class="hero-sub">${esc(place.name)} · Datos meteorológicos reales</div></div></section>`;
   }
   updateHeader();
@@ -776,8 +788,10 @@ function graphLine(points){
 }
 function renderChart(){
   if(!state.data || !$('weatherChart'))return;
+  cancelMotionWithin($('weatherChart'));
+  motionRuntime.chart=null;$('weatherChart').onclick=null;$('weatherChart').onpointermove=null;
   const hours=nextHours(24),n=hours.length;
-  if(n<2){$('weatherChart').innerHTML='<text x="30" y="130" fill="currentColor">Sin suficientes horas para trazar el gráfico.</text>';return;}
+  if(n<2){$('chartDetails').textContent='Sin detalle horario disponible.';$('weatherChart').innerHTML='<text x="30" y="130" fill="currentColor">Sin suficientes horas para trazar el gráfico.</text>';return;}
   state.selectedHour=clamp(state.selectedHour,0,n-1);
   const mode=state.activeChart;
   const title=mode==='temp'?`Temperatura (°${state.units}) · barras: precipitación (mm)`:mode==='rain'?'Probabilidad horaria de precipitación (%) · barras: mm':`Velocidad y ráfagas de viento (${windUnit()})`;
@@ -797,7 +811,7 @@ function renderChart(){
   const color=mode==='temp'?'#9bdfce':mode==='rain'?'#8ecbf0':'#eac795';
   const selected=points[state.selectedHour],selectedHour=hours[state.selectedHour];
   const curve=graphLine(points);
-  const area=curve && points[0] && points[n-1]?`${curve} L${x(n-1)},${y2} L${x(0)},${y2} Z`:'';
+  const area=curve && points.every(Boolean)?`${curve} L${x(n-1)},${y2} L${x(0)},${y2} Z`:'';
   const labels=[0,1,2,3,4].map(step=>{
     const frac=step/4,yy=y1+(y2-y1)*frac,value=max-(max-min)*frac;
     return `<line x1="${x1}" x2="${x2}" y1="${yy}" y2="${yy}" stroke="var(--stroke)" stroke-width="1" stroke-dasharray="${step===4?'0':'3 7'}"/><text x="${x1-14}" y="${yy+4}" text-anchor="end" font-size="11" fill="var(--subtle)">${format(value,mode==='temp'&&max-min<10?1:0)}</text>`;
@@ -815,38 +829,22 @@ function renderChart(){
     ${rainBars}
     ${curve?`<path data-motion-series d="${curve}" fill="none" stroke="${color}" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>`:''}
     ${mode==='wind'?`<path d="${graphLine(gustPts)}" fill="none" stroke="#b59ac7" stroke-width="2" stroke-dasharray="7 5" stroke-linejoin="round"/>`:''}
-    ${selectedGuides}
+    <g id="selectedGuides">${selectedGuides}</g>
     <rect x="${x1-13}" y="${y1-8}" width="${x2-x1+26}" height="${y2-y1+22}" fill="transparent" style="cursor:crosshair" id="chartTouch" />`;
   revealForecastLine();
   if(mode==='wind')$('chartLabel').textContent+=' · línea discontinua: ráfagas';
-  $('chartDetails').innerHTML=`<span class="hover-time">${ico('clock')}${esc(dayFormat(selectedHour.time,{weekday:'short'}))} ${esc(selectedHour.time.slice(11,16))}</span>
-    <span class="chart-metric"><i class="metric-dot"></i><strong>${tempLabel(selectedHour.temperature_2m)}</strong> Temperatura</span>
-    <span class="chart-metric"><i class="metric-dot" style="background:#8ecbf0"></i><strong>${format(selectedHour.precipitation_probability)}%</strong> Prob. lluvia</span>
-    <span class="chart-metric"><i class="metric-dot" style="background:#eac795"></i><strong>${mm(selectedHour.precipitation)} mm</strong> Precipitación</span>
-    <span class="chart-metric"><strong>${windLabel(selectedHour.wind_speed_10m)}</strong> Viento</span>`;
-  document.querySelectorAll('[data-hour]').forEach(el=>{const yes=Number(el.dataset.hour)===state.selectedHour;el.classList.toggle('selected',yes);el.setAttribute('aria-pressed',String(yes));});
   const svg=$('weatherChart');
-  const interaction=(event)=>{
-    const ctm=svg.getScreenCTM();if(!ctm)return;
-    const point=svg.createSVGPoint();point.x=event.clientX;point.y=event.clientY;
-    const local=point.matrixTransform(ctm.inverse());
-    const i=clamp(Math.round((local.x-x1)/dx),0,n-1);
-    if(i!==state.selectedHour){state.selectedHour=i;renderChart();}
-  };
-  svg.addEventListener('click',interaction);
-  svg.addEventListener('pointermove',e=>{if(e.pointerType==='mouse')interaction(e);});
+  motionRuntime.chart={svg,hours,points,color};updateChartSelection();syncIndicator();
+  // One handler slot per native event. No render-time listener accumulation.
+  const interaction=event=>{const ctm=svg.getScreenCTM();if(!ctm)return;const point=svg.createSVGPoint();point.x=event.clientX;point.y=event.clientY;const local=point.matrixTransform(ctm.inverse());const i=clamp(Math.round((local.x-x1)/dx),0,n-1);if(i!==state.selectedHour)selectForecastHour(i,event.type==='click');};
+  svg.onclick=interaction;svg.onpointermove=e=>{if(e.pointerType==='mouse')interaction(e);};
 }
 function attachDynamicEvents(){
-  document.querySelectorAll('[data-chart]').forEach(el=>el.addEventListener('click',()=>{state.activeChart=el.dataset.chart;renderChart();}));
-  document.querySelectorAll('[data-hour]').forEach(el=>el.addEventListener('click',()=>{state.selectedHour=Number(el.dataset.hour);renderChart();$('weatherChart').scrollIntoView({block:'nearest',behavior:'smooth'});}));
-  document.querySelectorAll('[data-day]').forEach(el=>el.addEventListener('click',()=>{
-    const index=Number(el.dataset.day);state.openDay=state.openDay===index?-1:index;
-    document.querySelectorAll('[data-day]').forEach(btn=>{
-      const i=Number(btn.dataset.day),expanded=i===state.openDay;
-      btn.setAttribute('aria-expanded',String(expanded));$( `day-detail-${i}` ).hidden=!expanded;
-    });
-  }));
+  document.querySelectorAll('[data-chart]').forEach(el=>el.addEventListener('click',()=>{if(state.activeChart===el.dataset.chart)return;state.activeChart=el.dataset.chart;renderChart();}));
+  document.querySelectorAll('[data-hour]').forEach(el=>el.addEventListener('click',()=>selectForecastHour(Number(el.dataset.hour))));
+  document.querySelectorAll('[data-day]').forEach(el=>el.addEventListener('click',()=>{const index=Number(el.dataset.day);state.openDay=state.openDay===index?-1:index;animateDayDetails();}));
 }
+
 function toggleFavorite(){
   const i=favoriteIndex(state.location);
   if(i>=0){state.favorites.splice(i,1);showToast('Ciudad eliminada de favoritos.');}
@@ -859,14 +857,20 @@ function defaultPlaces(){
   return [...state.favorites,...PRESETS].filter(p=>{const key=cacheIdentifier(p);if(seen.has(key))return false;seen.add(key);return true;});
 }
 function openCityDialog(){
-  state.modalRestoreFocus=document.activeElement;
-  $('cityOverlay').hidden=false;
+  if(motionRuntime.modalOpen){$('citySearch').focus();return;}
+  state.modalRestoreFocus=document.activeElement;motionRuntime.modalOpen=true;
+  cancelMotionWithin($('cityOverlay'));
+  $('cityOverlay').hidden=false;document.querySelector('.shell').inert=true;
+  document.body.style.overflow='hidden';
+  playMotion($('cityModal'),[{transform:`translateY(${-MOTION.distance}px)`},{transform:'none'}],MOTION.context);
   $('citySearch').value='';
   renderPlaces(defaultPlaces(),'Mis favoritos y ciudades sugeridas');
   $('citySearch').focus();
 }
 function closeCityDialog(){
-  $('cityOverlay').hidden=true;
+  if(!motionRuntime.modalOpen)return;motionRuntime.modalOpen=false;
+  cancelMotionWithin($('cityOverlay'));$('cityOverlay').hidden=true;
+  document.querySelector('.shell').inert=false;document.body.style.removeProperty('overflow');
   state.searchAbort?.abort();state.searchSequence++;clearTimeout(state.searchTimer);
   if(state.modalRestoreFocus?.focus && document.contains(state.modalRestoreFocus))state.modalRestoreFocus.focus();
 }
@@ -874,7 +878,9 @@ function renderPlaces(places,label){
   state.modalPlaces=places;
   $('searchHelp').textContent=label;
   const result=$('placeResults');
+  cancelMotionWithin(result);
   result.innerHTML=places.length?places.map((p,i)=>`<button class="place-item" data-place="${i}"><span class="place-icon">${ico(favoriteIndex(p)>=0?'star':'pin')}</span><span class="place-main"><strong>${esc(p.name)}</strong><small>${esc([p.admin1,p.country].filter(Boolean).join(' · ')||'Ubicación guardada')}</small></span>${ico('chevron-right')}</button>`).join(''):`<div class="modal-empty">No hay ciudades para mostrar. Probá con otro nombre o una localidad cercana.</div>`;
+  showSearchMotion();
   result.querySelectorAll('[data-place]').forEach(b=>b.addEventListener('click',()=>{
     const place=state.modalPlaces[Number(b.dataset.place)];
     if(!validLocation(place))return;
@@ -942,139 +948,154 @@ async function importBackup(file){
     await loadLocation(state.location,true);
   }catch(e){showToast(e.message||'No fue posible importar el archivo.');}
 }
-/* ATMÓS MOTION ENGINE: progressive enhancement; never fabricates weather data. */
-const motionMedia = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : {matches:false};
-const motionStoreKey='atmos.motion.enabled.v2';
-const motionRuntime={
-  choice:safeStorageGet(motionStoreKey)!=='off',raf:0,lastFrame:0,visible:false,
-  hero:null,canvas:null,ctx:null,observer:null,resizeObserver:null,particles:[],
-  width:0,height:0,scale:1,windX:0,windY:0,lastChartKey:''
-};
-function motionEnabled(){return motionRuntime.choice&&!motionMedia.matches;}
+/* Semantic motion: presentation is disposable; weather/state are authoritative. */
+const motionMedia=window.matchMedia('(prefers-reduced-motion: reduce)');
+const motionStoreKey='atmos.motion.enabled.v2'; // retain the existing preference
+const motionStyle=getComputedStyle(document.documentElement);
+const motionToken=(name,fallback)=>parseFloat(motionStyle.getPropertyValue('--motion-'+name))||fallback;
+const MOTION=Object.freeze({confirm:motionToken('confirm',110),local:motionToken('local',180),context:motionToken('context',260),layout:motionToken('layout',240),trace:motionToken('trace',380),step:motionToken('step',24),delayMax:motionToken('delay-max',120),distance:motionToken('distance',6),omega:motionToken('omega',24),burst:motionToken('burst',3000),count:motionToken('particle-cap',48),dpr:motionToken('dpr-cap',1.5),ease:motionStyle.getPropertyValue('--motion-arrive').trim()||'cubic-bezier(.2,.8,.2,1)'});
+const motionRuntime={choice:safeStorageGet(motionStoreKey)!=='off',active:new Map(),raf:0,hero:null,ctx:null,canvas:null,observer:null,resizeObserver:null,particles:[],width:0,height:0,lastFrame:0,started:0,elapsed:0,sceneKey:'',seenCharts:new Set(),indicator:null,spring:0,springTime:0,springStart:0,position:0,velocity:0,target:0,modalOpen:false,chart:null};
+function motionEnabled(){return motionRuntime.choice&&!motionMedia.matches&&!document.hidden;}
+function cancelMotion(el){const entry=motionRuntime.active.get(el);if(!entry)return;motionRuntime.active.delete(el);entry.animation.cancel();entry.cleanup?.();}
+function cancelMotionWithin(root){for(const el of [...motionRuntime.active.keys()])if(root===el||root?.contains(el))cancelMotion(el);}
+function playMotion(el,frames,duration=MOTION.local,cleanup=null,extra={}){
+  cancelMotion(el);
+  if(!el?.isConnected||!motionEnabled()||typeof el.animate!=='function'){cleanup?.();return null;}
+  let animation;
+  try{animation=el.animate(frames,{duration,easing:MOTION.ease,...extra});}catch(e){cleanup?.();console.warn('Transición omitida:',e.message);return null;}
+  const entry={animation,cleanup};motionRuntime.active.set(el,entry);
+  const finish=()=>{if(motionRuntime.active.get(el)!==entry)return;motionRuntime.active.delete(el);animation.cancel();cleanup?.();};
+  animation.finished.then(finish,error=>{if(error.name!=='AbortError')console.warn('Transición:',error);finish();});
+  return animation;
+}
 function syncMotionUI(){
-  const enabled=motionEnabled(),root=document.documentElement,b=$('motionToggle');
-  root.dataset.motion=enabled?'on':'off';
-  if(b){b.setAttribute('aria-pressed',String(enabled));b.setAttribute('aria-label',enabled?'Desactivar animación ambiental':'Activar animación ambiental');
-    b.title=motionMedia.matches?'El sistema tiene activado Reducir movimiento':enabled?'Desactivar animaciones':'Activar animaciones';}
-  if(enabled)activateAtmosphericScene();else stopAtmosphericScene();
+  const enabled=motionEnabled(),b=$('motionToggle');document.documentElement.dataset.motion=enabled?'on':'off';
+  b.setAttribute('aria-pressed',String(enabled));b.setAttribute('aria-label',enabled?'Desactivar movimiento':'Activar movimiento');
+  b.title=motionMedia.matches?'Movimiento reducido del sistema: transiciones estáticas':enabled?'Desactivar movimiento':'Activar movimiento';
+  if(!enabled){for(const el of [...motionRuntime.active.keys()])cancelMotion(el);stopIndicator();stopAtmosphericScene();}
+  syncIndicator(false);
 }
-function stopAtmosphericScene(){
-  if(motionRuntime.raf)cancelAnimationFrame(motionRuntime.raf);
-  motionRuntime.raf=0;motionRuntime.visible=false;
-  motionRuntime.observer?.disconnect();motionRuntime.observer=null;
-  motionRuntime.resizeObserver?.disconnect();motionRuntime.resizeObserver=null;
-  if(motionRuntime.hero){motionRuntime.hero.removeEventListener('pointermove',motionPointerMove);motionRuntime.hero.removeEventListener('pointerleave',motionPointerLeave);}
-  motionRuntime.ctx=null;motionRuntime.canvas=null;motionRuntime.hero=null;
-  motionRuntime.particles=[];
+function crossfadeThemeIcon(button,name){
+  if(button.dataset.symbol===name)return;
+  cancelMotionWithin(button);button.querySelectorAll('[data-motion-ghost]').forEach(e=>e.remove());
+  const old=button.dataset.symbol?button.querySelector('svg'):null;button.dataset.symbol=name;button.innerHTML=ico(name);
+  const current=button.querySelector('svg');
+  if(!old||!motionEnabled())return;
+  old.dataset.motionGhost='';old.setAttribute('aria-hidden','true');old.setAttribute('focusable','false');old.inert=true;
+  old.style.cssText='position:absolute;pointer-events:none;';button.appendChild(old);
+  playMotion(old,[{opacity:1},{opacity:0}],MOTION.local,()=>old.remove());
+  playMotion(current,[{opacity:0},{opacity:1}],MOTION.local);
 }
-function motionPointerMove(e){
-  if(!motionEnabled() || e.pointerType!=='mouse')return;
-  const el=motionRuntime.hero;if(!el)return;
-  const box=el.getBoundingClientRect();
-  el.style.setProperty('--orb-mx',((e.clientX-box.left-box.width/2)/Math.max(box.width,1)*13).toFixed(1)+'px');
-  el.style.setProperty('--orb-my',((e.clientY-box.top-box.height/2)/Math.max(box.height,1)*9).toFixed(1)+'px');
+function stopIndicator(){if(motionRuntime.spring)cancelAnimationFrame(motionRuntime.spring);motionRuntime.spring=0;motionRuntime.velocity=0;if(motionRuntime.indicator?.isConnected){motionRuntime.position=motionRuntime.target;motionRuntime.indicator.style.transform=`translateX(${motionRuntime.target}px)`;}}
+function indicatorFrame(t){
+  const rt=motionRuntime;rt.spring=0;
+  if(!motionEnabled()||!rt.indicator?.isConnected){stopIndicator();return;}
+  const dt=Math.min(.05,Math.max(0,(t-(rt.springTime||t))/1000));rt.springTime=t;
+  // Exact solution for x'' + 2ωx' + ω²(x-target)=0, px and seconds.
+  const y=rt.position-rt.target,b=rt.velocity+MOTION.omega*y,e=Math.exp(-MOTION.omega*dt);
+  rt.position=rt.target+(y+b*dt)*e;rt.velocity=(rt.velocity-MOTION.omega*b*dt)*e;
+  rt.indicator.style.transform=`translateX(${rt.position}px)`;
+  if((Math.abs(rt.position-rt.target)<.15&&Math.abs(rt.velocity)<1)||t-rt.springStart>900){stopIndicator();return;}
+  rt.spring=requestAnimationFrame(indicatorFrame);
 }
-function motionPointerLeave(){
-  motionRuntime.hero?.style.setProperty('--orb-mx','0px');
-  motionRuntime.hero?.style.setProperty('--orb-my','0px');
+function syncIndicator(animate=true){
+  const group=document.querySelector('.segmented'),selected=group?.querySelector('[aria-pressed="true"]');if(!group||!selected){stopIndicator();return;}
+  let el=group.querySelector('.selection-marker');const fresh=!el;
+  if(fresh){el=document.createElement('span');el.className='selection-marker';el.setAttribute('aria-hidden','true');group.prepend(el);}
+  const rt=motionRuntime,changed=rt.indicator!==el; if(changed)stopIndicator(); rt.indicator=el;
+  const target=selected.offsetLeft;el.style.width=selected.offsetWidth+'px';rt.target=target;
+  if(fresh||changed||!animate||!motionEnabled()){stopIndicator();return;}
+  // Retarget without resetting position or velocity; no spring on measured values.
+  if(!rt.spring){rt.springTime=0;rt.springStart=performance.now();rt.spring=requestAnimationFrame(indicatorFrame);}
 }
-function prepareParticles(){
-  const rt=motionRuntime,scene=rt.hero?.dataset.scene||'clear',night=rt.hero?.dataset.night==='true';
-  const intense=scene==='rain'||scene==='storm'||scene==='snow';
-  const count=Math.max(12,Math.min(92,Math.round(rt.width/11*(intense?1.0:.5))));
-  rt.particles=Array.from({length:count},(_,i)=>({
-    x:Math.random()*rt.width,y:Math.random()*rt.height,depth:.4+Math.random()*.8,
-    opacity:(night?.3:.18)+Math.random()*(night?.36:.28),radius:1+Math.random()*(scene==='snow'?2.3:1),
-    phase:Math.random()*Math.PI*2,index:i
-  }));
+function animateDayDetails(){
+  const entries=[...document.querySelectorAll('[data-day]')].map(btn=>{const el=$('day-detail-'+btn.dataset.day);return{btn,el,from:el.hidden?0:el.getBoundingClientRect().height,was:btn.getAttribute('aria-expanded')==='true',open:Number(btn.dataset.day)===state.openDay};});
+  entries.forEach(({btn,el,from,was,open})=>{
+    if(was===open)return;
+    cancelMotion(el);btn.setAttribute('aria-expanded',String(open));el.inert=!open;el.setAttribute('aria-hidden',String(!open));el.hidden=false;
+    const target=open?el.firstElementChild.getBoundingClientRect().height:0;
+    const settle=()=>{const active=Number(btn.dataset.day)===state.openDay;el.hidden=!active;el.inert=!active;el.setAttribute('aria-hidden',String(!active));el.style.removeProperty('overflow');};
+    el.style.overflow='hidden';playMotion(el,[{height:from+'px'},{height:target+'px'}],MOTION.layout,settle);
+  });
 }
-function sizeAtmosphere(){
-  const rt=motionRuntime,el=rt.hero,canvas=rt.canvas;
-  if(!el||!canvas)return;
-  const w=Math.max(0,Math.round(el.clientWidth)),h=Math.max(0,Math.round(el.clientHeight));
-  if(!w||!h)return;
-  const scale=Math.min(window.devicePixelRatio||1,1.5);
-  if(w===rt.width&&h===rt.height&&scale===rt.scale)return;
-  rt.width=w;rt.height=h;rt.scale=scale;
-  canvas.width=Math.round(w*scale);canvas.height=Math.round(h*scale);
-  rt.ctx?.setTransform(scale,0,0,scale,0,0);
-  prepareParticles();
+function showSearchMotion(){
+  const list=$('placeResults');
+  // Controls remain fully visible/operable from frame zero; only new result icons are staggered.
+  [...list.querySelectorAll('.place-icon')].slice(0,7).forEach((el,i)=>playMotion(el,[{transform:`translateX(${-MOTION.distance}px)`,opacity:.65},{transform:'none',opacity:1}],MOTION.local,null,{delay:Math.min(i*MOTION.step,MOTION.delayMax)}));
 }
-function drawAtmosphericFrame(now){
-  const rt=motionRuntime;
-  rt.raf=0;
-  if(!motionEnabled()||!rt.visible||document.hidden||!rt.ctx||!rt.hero?.isConnected)return;
-  // Cap cinematic background to 30fps; preserve smooth interaction on mobile.
-  if(now-rt.lastFrame<32){rt.raf=requestAnimationFrame(drawAtmosphericFrame);return;}
-  const dt=Math.min(2.5,Math.max(.25,(now-(rt.lastFrame||now-33))/33));rt.lastFrame=now;
-  const c=rt.ctx,w=rt.width,h=rt.height,scene=rt.hero.dataset.scene,night=rt.hero.dataset.night==='true';
-  c.clearRect(0,0,w,h);
-  const rain=scene==='rain'||scene==='storm',snow=scene==='snow',cloud=scene==='cloud',storm=scene==='storm';
-  for(const p of rt.particles){
-    const depth=p.depth;
-    if(rain){
-      const dx=(rt.windX*.7+1.8)*depth,dy=(9.5+(storm?6.5:2))*depth;
-      p.x+=dx*dt;p.y+=dy*dt;
-      if(p.y>h+30){p.y=-28;p.x=Math.random()*w;}
-      if(p.x>w+25)p.x=-25;if(p.x< -25)p.x=w+25;
-      c.strokeStyle=`rgba(210,239,255,${(p.opacity*.58).toFixed(3)})`;
-      c.lineWidth=depth*.95;c.beginPath();c.moveTo(p.x,p.y);c.lineTo(p.x-(dx*2.3),p.y-dy*2.5);c.stroke();
-    }else if(snow){
-      p.x+=(rt.windX*.45+Math.sin(now/990+p.phase)*.65)*depth*dt;
-      p.y+=(0.8+depth*.8)*dt;
-      if(p.y>h+8){p.y=-7;p.x=Math.random()*w;}
-      if(p.x>w+10)p.x=-10;if(p.x< -10)p.x=w+10;
-      c.fillStyle=`rgba(241,250,255,${(p.opacity*.7).toFixed(3)})`;
-      c.beginPath();c.arc(p.x,p.y,p.radius*depth,0,Math.PI*2);c.fill();
-    }else{
-      p.x+=(rt.windX*.12+.14)*depth*dt;
-      p.y-=.085*depth*dt;
-      if(p.x>w+5)p.x=-5;if(p.x< -5)p.x=w+5;if(p.y< -5)p.y=h+5;
-      const twinkle=.62+.38*Math.sin(now/1130+p.phase);
-      const alpha=p.opacity*twinkle*(cloud?.58:night?1:.7);
-      c.fillStyle=`rgba(${night?'218,236,255':'248,242,216'},${alpha.toFixed(3)})`;
-      c.beginPath();c.arc(p.x,p.y,p.radius*(night?.67:.86)*depth,0,Math.PI*2);c.fill();
-    }
-  }
-  rt.raf=requestAnimationFrame(drawAtmosphericFrame);
-}
-function resumeAtmosphericScene(){
-  const rt=motionRuntime;
-  if(!rt.raf&&rt.visible&&!document.hidden&&motionEnabled()){rt.lastFrame=0;rt.raf=requestAnimationFrame(drawAtmosphericFrame);}
-}
-function activateAtmosphericScene(){
-  const hero=document.querySelector('#appContent .hero');
-  if(!motionEnabled()||!hero?.querySelector('.atmos-ambient')){stopAtmosphericScene();return;}
-  if(motionRuntime.hero===hero){resumeAtmosphericScene();return;}
-  stopAtmosphericScene();
-  const rt=motionRuntime;rt.hero=hero;rt.canvas=hero.querySelector('.atmos-ambient');
-  rt.ctx=rt.canvas.getContext('2d',{alpha:true});
-  if(!rt.ctx)return;
-  const n=state.data?.current||{},direction=((n.wind_direction_10m||0)+180)*Math.PI/180;
-  const speedFactor=clamp((n.wind_speed_10m||7)/18,.4,2.3);
-  rt.windX=Math.sin(direction)*speedFactor;
-  rt.windY=-Math.cos(direction)*speedFactor;
-  sizeAtmosphere();
-  hero.addEventListener('pointermove',motionPointerMove,{passive:true});hero.addEventListener('pointerleave',motionPointerLeave,{passive:true});
-  if(typeof ResizeObserver!=='undefined'){rt.resizeObserver=new ResizeObserver(sizeAtmosphere);rt.resizeObserver.observe(hero);}
-  if(typeof IntersectionObserver!=='undefined'){
-    rt.observer=new IntersectionObserver(entries=>{rt.visible=entries.some(e=>e.isIntersecting);if(rt.visible)resumeAtmosphericScene();else if(rt.raf){cancelAnimationFrame(rt.raf);rt.raf=0;}},{threshold:.03});
-    rt.observer.observe(hero);
-  }else{rt.visible=true;resumeAtmosphericScene();}
+function captureFavoritePositions(){return new Map([...$('favoriteList').querySelectorAll('[data-place-key]')].map(el=>[el.dataset.placeKey,el.getBoundingClientRect()]));}
+function animateFavorites(before){
+  const nodes=[...$('favoriteList').querySelectorAll('[data-place-key]')],after=nodes.map(el=>el.getBoundingClientRect());
+  nodes.forEach((el,i)=>{const from=before.get(el.dataset.placeKey),to=after[i];if(!from||!to.width)return;
+    const dx=from.left-to.left,dy=from.top-to.top;if(Math.abs(dx)+Math.abs(dy)<.5)return;
+    playMotion(el,[{transform:`translate(${dx}px,${dy}px)`},{transform:'none'}],MOTION.layout);
+  });
 }
 function revealForecastLine(){
-  if(!motionEnabled())return;
-  const chart=$('weatherChart'),path=chart?.querySelector('[data-motion-series]');
-  if(!path||typeof path.animate!=='function')return;
-  const key=[cacheIdentifier(state.location),state.fetchedAt,state.activeChart].join('|');
-  if(key===motionRuntime.lastChartKey)return;
-  motionRuntime.lastChartKey=key;
-  const length=path.getTotalLength();
-  if(!Number.isFinite(length)||length<=0)return;
-  const duration=800;
-  const animation=path.animate([{strokeDasharray:`${length} ${length}`,strokeDashoffset:length,opacity:.25},{strokeDasharray:`${length} ${length}`,strokeDashoffset:0,opacity:1}],{duration,easing:'cubic-bezier(.22,1,.36,1)'});
-  animation.finished.catch(()=>{});
+  const svg=$('weatherChart'),path=svg?.querySelector('[data-motion-series]');if(!path)return;
+  // Only the first exploration of a given location/hour range/metric; never on pointer scrubbing.
+  const key=[cacheIdentifier(state.location),nextHours(1)[0]?.time,state.activeChart].join('|');
+  if(motionRuntime.seenCharts.has(key))return;
+  motionRuntime.seenCharts.add(key);if(motionRuntime.seenCharts.size>32)motionRuntime.seenCharts.delete(motionRuntime.seenCharts.values().next().value);
+  if(!motionEnabled()||state.activeChart!=='temp')return;
+  const length=path.getTotalLength();if(!Number.isFinite(length)||length<=0)return;
+  playMotion(path,[{strokeDasharray:`${length} ${length}`,strokeDashoffset:length},{strokeDasharray:`${length} ${length}`,strokeDashoffset:0}],MOTION.trace,null,{easing:'linear'});
 }
+function selectForecastHour(index,announce=true){
+  const svg=$('weatherChart'),chart=motionRuntime.chart;if(!svg||!chart||chart.svg!==svg)return;
+  state.selectedHour=clamp(index,0,chart.hours.length-1);updateChartSelection(announce);
+}
+function updateChartSelection(announce=false){
+  const model=motionRuntime.chart;if(!model?.svg.isConnected)return;
+  const h=model.hours[state.selectedHour],p=model.points[state.selectedHour],group=$('selectedGuides');
+  group.innerHTML=p?`<line x1="${p.x}" x2="${p.x}" y1="25" y2="193" stroke="${model.color}" stroke-dasharray="4 6" stroke-opacity=".5"/><circle cx="${p.x}" cy="${p.y}" r="9" fill="${model.color}" fill-opacity=".2"/><circle cx="${p.x}" cy="${p.y}" r="4" fill="${model.color}" stroke="var(--surface)" stroke-width="2"/>`:'';
+  $('chartDetails').innerHTML=`<span class="hover-time">${ico('clock')}${esc(dayFormat(h.time,{weekday:'short'}))} ${esc(h.time.slice(11,16))}</span><span class="chart-metric"><i class="metric-dot"></i><strong>${tempLabel(h.temperature_2m)}</strong> Temperatura</span><span class="chart-metric"><i class="metric-dot" style="background:#8ecbf0"></i><strong>${format(h.precipitation_probability)}%</strong> Prob. lluvia</span><span class="chart-metric"><i class="metric-dot" style="background:#eac795"></i><strong>${mm(h.precipitation)} mm</strong> Precipitación</span><span class="chart-metric"><strong>${windLabel(h.wind_speed_10m)}</strong> Viento</span>`;
+  document.querySelectorAll('[data-hour]').forEach(el=>{const active=Number(el.dataset.hour)===state.selectedHour;el.classList.toggle('selected',active);el.setAttribute('aria-pressed',String(active));});
+  if(announce)$('motionStatus').textContent=`${h.time.slice(11,16)}. Temperatura ${tempLabel(h.temperature_2m)}. Lluvia ${format(h.precipitation_probability)} por ciento. Viento ${windLabel(h.wind_speed_10m)}.`;
+}
+function stopAtmosphericScene(){
+  const rt=motionRuntime;if(rt.raf)cancelAnimationFrame(rt.raf);rt.raf=0;
+  rt.observer?.disconnect();rt.resizeObserver?.disconnect();rt.observer=rt.resizeObserver=null;
+  rt.ctx?.clearRect(0,0,rt.width,rt.height);rt.particles=[];rt.hero=rt.canvas=rt.ctx=null;rt.lastFrame=rt.started=0;
+}
+function activateAtmosphericScene(){
+  const rt=motionRuntime,hero=document.querySelector('#appContent .hero[data-scene]');
+  if(!hero||!motionEnabled())return;
+  const key=cacheIdentifier(state.location)+'|'+hero.dataset.scene;
+  if(rt.sceneKey===key)return;rt.sceneKey=key;stopAtmosphericScene();
+  const scene=hero.dataset.scene;if(!['rain','snow','storm'].includes(scene))return;
+  const canvas=hero.querySelector('canvas'),ctx=canvas?.getContext('2d',{alpha:true});if(!ctx)return;
+  rt.hero=hero;rt.canvas=canvas;rt.ctx=ctx;
+  rt.width=hero.clientWidth;rt.height=hero.clientHeight;const scale=Math.min(devicePixelRatio||1,MOTION.dpr);
+  canvas.width=Math.round(rt.width*scale);canvas.height=Math.round(rt.height*scale);ctx.setTransform(scale,0,0,scale,0,0);
+  let seed=[...key].reduce((n,c)=>((n*31+c.charCodeAt(0))>>>0),1);
+  const random=()=>{seed=(1664525*seed+1013904223)>>>0;return seed/4294967296;};
+  const count=Math.min(MOTION.count,Math.max(12,Math.round(rt.width/22)));
+  rt.particles=Array.from({length:count},()=>({x:random()*rt.width,y:random()*rt.height,depth:.5+random()*.5,phase:random()*6.283,radius:1+random()*1.8}));
+  rt.elapsed=0;rt.lastFrame=0;
+  const start=()=>{if(!rt.raf&&rt.hero===hero&&motionEnabled())rt.raf=requestAnimationFrame(drawAtmosphericFrame);};
+  if(typeof IntersectionObserver!=='undefined'){
+    rt.observer=new IntersectionObserver(entries=>{if(rt.hero!==hero)return;if(entries[0].isIntersecting)start();else if(rt.started)stopAtmosphericScene();},{threshold:.05});rt.observer.observe(hero);
+  }else{const rect=hero.getBoundingClientRect();if(rect.bottom>0&&rect.top<innerHeight)start();}
+  if(typeof ResizeObserver!=='undefined'){rt.resizeObserver=new ResizeObserver(()=>{if(rt.hero===hero&&(hero.clientWidth!==rt.width||hero.clientHeight!==rt.height))stopAtmosphericScene();});rt.resizeObserver.observe(hero);}
+}
+function drawAtmosphericFrame(t){
+  const rt=motionRuntime;rt.raf=0;if(!motionEnabled()||!rt.hero?.isConnected||!rt.ctx){stopAtmosphericScene();return;}
+  if(!rt.started)rt.started=t;
+  const elapsed=t-rt.started;if(elapsed>=MOTION.burst){stopAtmosphericScene();return;}
+  if(rt.lastFrame&&t-rt.lastFrame<1000/30){rt.raf=requestAnimationFrame(drawAtmosphericFrame);return;}
+  const dt=Math.min(.05,(t-(rt.lastFrame||t))/1000);rt.lastFrame=t;rt.elapsed=elapsed;
+  const c=rt.ctx,snow=rt.hero.dataset.scene==='snow',fade=Math.min(1,elapsed/200,(MOTION.burst-elapsed)/450);
+  c.clearRect(0,0,rt.width,rt.height);c.strokeStyle=`rgba(219,242,255,${.28*fade})`;c.fillStyle=`rgba(244,250,255,${.5*fade})`;
+  for(const p of rt.particles){p.x+=(snow?Math.sin(elapsed/900+p.phase)*12:28)*p.depth*dt;p.y+=(snow?35:330)*p.depth*dt;
+    if(p.y>rt.height+20)p.y=-20;if(p.x>rt.width+10)p.x=-10;if(p.x< -10)p.x=rt.width+10;
+    c.beginPath();if(snow){c.arc(p.x,p.y,p.radius,0,Math.PI*2);c.fill();}else{c.lineWidth=p.depth;c.moveTo(p.x,p.y);c.lineTo(p.x-2,p.y-15*p.depth);c.stroke();}}
+  rt.raf=requestAnimationFrame(drawAtmosphericFrame);
+}
+function resumeAtmosphericScene(){/* Hidden/offscreen effects settle, rather than restarting a presentation. */}
+function clearPresentation(){cancelMotionWithin($('appContent'));stopIndicator();stopAtmosphericScene();motionRuntime.chart=null;}
+function motionSnapshot(){return Object.freeze({active:motionRuntime.active.size,spring:!!motionRuntime.spring,particles:motionRuntime.particles.length,raf:!!motionRuntime.raf,observers:Number(!!motionRuntime.observer)+Number(!!motionRuntime.resizeObserver),ghosts:document.querySelectorAll('[data-motion-ghost]').length,enabled:motionEnabled()});}
+
 function wire(){
   $('openCity').addEventListener('click',openCityDialog);
   $('addCitySide').addEventListener('click',openCityDialog);
@@ -1097,7 +1118,7 @@ function wire(){
     const term=e.target.value.trim();clearTimeout(state.searchTimer);state.searchSequence++;
     state.searchAbort?.abort();
     if(term.length<2){renderPlaces(defaultPlaces(),'Favoritos y sugerencias · Escribí al menos 2 caracteres para buscar.');return;}
-    $('searchHelp').textContent='Buscando ciudades…';$('placeResults').innerHTML='<div class="modal-empty">Buscando ubicaciones…</div>';
+    $('searchHelp').textContent='Buscando ciudades…';cancelMotionWithin($('placeResults'));$('placeResults').innerHTML='<div class="modal-empty">Buscando ubicaciones…</div>';
     const seq=state.searchSequence;
     state.searchTimer=setTimeout(()=>searchCities(term,seq),320);
   });
@@ -1111,7 +1132,7 @@ function wire(){
   $('unitToggle').addEventListener('click',()=>{state.units=state.units==='C'?'F':'C';savePrefs();if(state.data)render();else updateHeader();showToast(`Unidades: ${state.units==='C'?'Celsius y km/h':'Fahrenheit y mph'}.`);});
   $('themeToggle').addEventListener('click',()=>{state.theme=state.theme==='dark'?'light':'dark';savePrefs();updateHeader();});
   $('motionToggle').addEventListener('click',()=>{
-    if(motionMedia.matches){showToast('Desactivá Reducir movimiento en la configuración de iOS para usar animaciones.');return;}
+    if(motionMedia.matches){showToast('Se respeta Reducir movimiento del sistema. La app mantiene todas sus funciones.');return;}
     motionRuntime.choice=!motionRuntime.choice;
     safeStorageSet(motionStoreKey,motionRuntime.choice?'on':'off');
     syncMotionUI();
@@ -1122,7 +1143,7 @@ function wire(){
   $('refreshBtn').addEventListener('click',()=>loadLocation(state.location,true));
   document.querySelectorAll('[data-scroll]').forEach(b=>b.addEventListener('click',()=>{
     document.querySelectorAll('.side-item[data-scroll]').forEach(x=>x.classList.toggle('active',x===b));
-    $(b.dataset.scroll)?.scrollIntoView({behavior:'smooth',block:'start'});
+    $(b.dataset.scroll)?.scrollIntoView({behavior:motionEnabled()?'smooth':'instant',block:'start'});
   }));
   ['exportSide','exportMobile'].forEach(id=>$(id).addEventListener('click',exportBackup));
   ['importSide','importMobile'].forEach(id=>$(id).addEventListener('click',()=>$('importFile').click()));
@@ -1130,10 +1151,11 @@ function wire(){
   window.addEventListener('online',()=>loadLocation(state.location,true));
   window.addEventListener('offline',()=>{if(state.data)render();else updateHeader();});
   document.addEventListener('visibilitychange',()=>{
-    if(!document.hidden){updateHeader();resumeAtmosphericScene();}
-    else if(motionRuntime.raf){cancelAnimationFrame(motionRuntime.raf);motionRuntime.raf=0;}
+    syncMotionUI();if(!document.hidden)updateHeader();
   });
-  window.addEventListener('pageshow',()=>{if(motionEnabled()&&state.data)activateAtmosphericScene();});
+  window.addEventListener('pageshow',syncMotionUI);
+  window.addEventListener('pagehide',()=>{for(const el of [...motionRuntime.active.keys()])cancelMotion(el);stopIndicator();stopAtmosphericScene();});
+  window.addEventListener('resize',()=>{for(const el of [...motionRuntime.active.keys()])cancelMotion(el);syncIndicator(false);stopAtmosphericScene();});
   setInterval(()=>{updateHeader();},60000);
 }
 wire();syncMotionUI();updateHeader();updateFavorites();loadLocation(state.location);

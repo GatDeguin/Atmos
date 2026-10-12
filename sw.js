@@ -1,6 +1,6 @@
 /* ATMÓS — cache de la aplicación, no intercepta datos meteorológicos de terceros. */
 'use strict';
-const NAME='atmos-app-shell-motion-v3';
+const NAME='atmos-app-shell-semantic-v4';
 const ASSETS=['./','./index.html','./instalar.html','./manifest.webmanifest','./icons/favicon.svg',
 './icons/atmos-180.png','./icons/atmos-192.png','./icons/atmos-large.svg','./widget/ATMOS-Widget.js'];
 self.addEventListener('install',event=>{
@@ -8,7 +8,7 @@ self.addEventListener('install',event=>{
 });
 self.addEventListener('activate',event=>{
   event.waitUntil(Promise.all([
-    caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('atmos-')&&k!==NAME).map(k=>caches.delete(k)))),
+    caches.keys().then(keys=>Promise.all(keys.filter(k=>(k.startsWith('atmos-app-shell-')||k.startsWith('atmos-shell-'))&&k!==NAME).map(k=>caches.delete(k)))),
     self.clients.claim()
   ]));
 });

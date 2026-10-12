@@ -17,7 +17,12 @@ Workflow `.github/workflows/pages.yml`. Activar GitHub Pages una sola vez en **S
 
 ## Motion graphics
 
-Canvas 2D (partículas decorativas según cielo, lluvia o nieve); transiciones CSS, microinteracciones, parallax y gráficas con Web Animations API. Botón ✧ para activarlas/desactivarlas. Respeta `prefers-reduced-motion`, detiene el render fuera de pantalla y limita el fondo a ~30 FPS cuando el hardware permite.
+Sistema semántico sin dependencias: selección con resorte críticamente amortiguado, expansión reversible de días, favoritos con FLIP, entrada acotada de iconos de búsqueda y disolución del icono de tema. Las cifras se actualizan inmediatamente y no se interpolan.
+
+Lluvia/nieve: representación cualitativa de 3 s como máximo, hasta 48 partículas, sin bucles decorativos permanentes. Botón ✧ y `prefers-reduced-motion` desactivan movimiento CSS y JavaScript sin impedir las tareas. No se cambia el motor de datos ni los widgets.
+
+[Diagnóstico, matriz de 16 técnicas, contratos y evidencia](docs/MOTION_SEMANTICO.md). Pruebas reproducibles: `tests/test_motion.py` y `tests/test_semantic_contracts.py`. La verificación local se hizo en Chromium, con datos sintéticos; no equivale a una prueba de Safari/iPhone físico.
+
 
 ## Privacidad y límites
 
