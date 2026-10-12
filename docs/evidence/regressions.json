@@ -1,0 +1,15 @@
+{
+  "browser": "144.0.7559.96",
+  "viewport": [1440, 1000],
+  "fixture": "synthetic, deterministic, 192 hours / 8 days",
+  "load": "inline:/mnt/data/atmos-work/index.html",
+  "results": [
+    {"name":"Chart listeners remain constant across 20 hour selections","passed":true,"seconds":0.03,"observed":{}},
+    {"name":"Dialog isolates background and restores focus","passed":true,"seconds":0.165,"observed":null},
+    {"name":"Manual motion off stops CSS and JavaScript immediately","passed":true,"seconds":0.136,"observed":null},
+    {"name":"Atmosphere and transient effects reach rest","passed":true,"seconds":3.805,"observed":{"pendingRAF":0}},
+    {"name":"Measured 30 hour selections","passed":true,"seconds":0.142,"observed":{"samples":[1.099999999976717,0.7000000000698492,0.5,0.39999999990686774,0.5,0.5,0.30000000004656613,0.6000000000931323,0.5,0.40000000002328306,1.3000000000465661,0.5999999999767169,0.5,0.6999999999534339,0.5999999999767169,0.5,0.5999999999767169,0.5999999999767169,0.39999999990686774,0.5,0.5999999999767169,0.5,0.5999999999767169,0.5,0.5,0.5999999999767169,0.5999999999767169,0.5,0.6000000000931323,0.5999999999767169],"rafCallbacks":14,"longTasks":[56,77],"chartListenerRegistrations":{}}}
+  ],
+  "pageErrors": [],
+  "unhandled": []
+}
