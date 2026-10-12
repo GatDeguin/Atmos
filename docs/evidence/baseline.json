@@ -1,0 +1,15 @@
+{
+  "browser": "144.0.7559.96",
+  "viewport": [1440, 1000],
+  "fixture": "synthetic, deterministic, 192 hours / 8 days",
+  "load": "inline:/mnt/data/atmos-evidence/baseline.html",
+  "results": [
+    {"name":"Chart listeners remain constant across 20 hour selections","passed":false,"seconds":0.089,"error":"chart listener registrations grew: {'click': 1, 'pointermove': 1} -> {'click': 21, 'pointermove': 21}"},
+    {"name":"Dialog isolates background and restores focus","passed":false,"seconds":0.454,"error":"background not inert while dialog open"},
+    {"name":"Manual motion off stops CSS and JavaScript immediately","passed":false,"seconds":0.165,"error":"Motion disabled but animations remain: [{'name': 'WAAPI', 'target': 'icon-btn location-btn'}, {'name': 'WAAPI', 'target': 'icon-btn motion-toggle'}, {'name': 'WAAPI', 'target': 'icon-btn motion-toggle'}, {'name': 'WAAPI', 'target': 'icon-btn motion-toggle'}, {'name': 'WAAPI', 'target': 'icon-btn motion-toggle'}, {'name': 'WAAPI', 'target': 'icon-btn motion-toggle'}, {'name': 'WAAPI', 'target': 'icon-btn motion-toggle'}, {'name': 'WAAPI', 'target': 'icon-btn motion-toggle'}, {'name': 'WAAPI', 'target': 'icon day-chevron'}, {'name': 'WAAPI', 'target': 'icon day-chevron'}, {'name': 'motion-rise', 'target': 'day-detail'}]"},
+    {"name":"Atmosphere and transient effects reach rest","passed":false,"seconds":3.811,"error":"1 requestAnimationFrame loops still scheduled after rest"},
+    {"name":"Measured 30 hour selections","passed":true,"seconds":0.215,"observed":{"samples":[4.5,2.900000000023283,2.7999999999883585,2.099999999976717,2.2999999999883585,2.7000000000116415,2.3999999999650754,3.7000000000116415,2.5,2.7000000000116415,3.599999999976717,3,2.900000000023283,2.7999999999883585,2.7000000000116415,3.1000000000349246,3.800000000046566,4.900000000023283,3.2000000000116415,2.7999999999883585,2.7999999999883585,2.7000000000116415,4.2999999999883585,2.8999999999650754,2.7000000000116415,2.7999999999883585,2.8999999999650754,2.6000000000349246,2.8999999999650754,2.800000000046566],"rafCallbacks":277,"longTasks":[56,81,56,65],"chartListenerRegistrations":{"click":51,"pointermove":51}}}
+  ],
+  "pageErrors": [],
+  "unhandled": []
+}
